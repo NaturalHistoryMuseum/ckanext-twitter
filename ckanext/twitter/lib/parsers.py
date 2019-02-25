@@ -1,5 +1,7 @@
 import math
 
+from ckan.lib.search import SearchIndexError
+
 import ckan.logic as logic
 import re
 from ckan.logic import get_action
@@ -113,7 +115,7 @@ def get_number_records(context, pkg_id):
                 'resource_id': rid
                 })
             total += resource_data.get('total', 0)
-        except logic.NotFound:
+        except (logic.NotFound, SearchIndexError):
             pass
     return total
 
