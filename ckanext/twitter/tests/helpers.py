@@ -241,7 +241,7 @@ class DataFactory(object):
 class Configurer(object):
     '''
     A class for easily and consistently accessing, resetting, and otherwise
-    manipulating the current pylons config within tests.
+    manipulating the current config within tests.
     '''
 
     def __init__(self, debug=True):
@@ -253,21 +253,21 @@ class Configurer(object):
 
     def store(self):
         '''
-        Stores a copy of the current pylons config.
+        Stores a copy of the current config.
         '''
         self.stored = toolkit.config.copy()
 
     @property
     def current(self):
         '''
-        Returns the current pylons config.
-        :return: PylonsConfig
+        Returns the current config.
+        :return: Config
         '''
         return toolkit.config
 
     def reset(self):
         '''
-        Overwrites the current pylons config with the stored config,
+        Overwrites the current config with the stored config,
         then sets the debug value to ensure that this is consistent.
         '''
         toolkit.config.update(self.stored)

@@ -5,7 +5,7 @@
 # Created by the Natural History Museum in London, UK
 
 import nose
-from ckan.tests.pylons_controller import PylonsTestCase
+from ckan.tests import helpers
 
 from ckan import plugins
 from ckanext.twitter.lib import (parsers as twitter_parsers)
@@ -14,12 +14,16 @@ from ckanext.twitter.tests.helpers import Configurer, DataFactory
 eq_ = nose.tools.eq_
 
 
-class TestDatasetMetadata(PylonsTestCase):
+class TestDatasetMetadata(helpers.FunctionalTestBase):
     @classmethod
     def setup_class(cls):
         super(TestDatasetMetadata, cls).setup_class()
         cls.config = Configurer()
-        plugins.load(u'datastore')
+        try:
+            plugins.load(u'datastore')
+        except:
+            plugins.unload(u'datastore')
+            plugins.load(u'versioned_datastore')
         plugins.load(u'twitter')
         cls.df = DataFactory()
 
@@ -27,7 +31,10 @@ class TestDatasetMetadata(PylonsTestCase):
     def teardown_class(cls):
         cls.config.reset()
         cls.df.destroy()
-        plugins.unload(u'datastore')
+        if plugins.plugin_loaded(u'datastore'):
+            plugins.unload(u'datastore')
+        if plugins.plugin_loaded(u'versioned_datastore'):
+            plugins.unload(u'versioned_datastore')
         plugins.unload(u'twitter')
 
     def test_gets_dataset_author(self):

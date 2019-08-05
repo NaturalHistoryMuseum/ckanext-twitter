@@ -19,7 +19,11 @@ class TestTweetGeneration(helpers.FunctionalTestBase):
     def setup_class(cls):
         super(TestTweetGeneration, cls).setup_class()
         cls.config = Configurer()
-        plugins.load(u'datastore')
+        try:
+            plugins.load(u'datastore')
+        except:
+            plugins.unload(u'datastore')
+            plugins.load(u'versioned_datastore')
         plugins.load(u'twitter')
         cls.df = DataFactory()
         cache_helpers.reset_cache()
@@ -31,7 +35,10 @@ class TestTweetGeneration(helpers.FunctionalTestBase):
     def teardown_class(cls):
         cls.config.reset()
         cls.df.destroy()
-        plugins.unload(u'datastore')
+        if plugins.plugin_loaded(u'datastore'):
+            plugins.unload(u'datastore')
+        if plugins.plugin_loaded(u'versioned_datastore'):
+            plugins.unload(u'versioned_datastore')
         plugins.unload(u'twitter')
 
     def test_generates_tweet_if_public(self):
