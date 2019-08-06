@@ -4,13 +4,14 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
+import ckantest.factories
+import ckantest.helpers
 import nose
 
 from ckan import plugins
 from ckan.common import session
 from ckan.tests import helpers
 from ckanext.twitter.lib.helpers import TwitterJSHelpers, twitter_pkg_suitable
-from ckanext.twitter.tests.helpers import Configurer, DataFactory
 
 eq_ = nose.tools.eq_
 
@@ -19,10 +20,10 @@ class TestGetConfigVariables(helpers.FunctionalTestBase):
     @classmethod
     def setup_class(cls):
         super(TestGetConfigVariables, cls).setup_class()
-        plugins.load(u'datastore')
+        ckantest.helpers.plugins.load_datastore()
         plugins.load(u'twitter')
-        cls.config = Configurer()
-        cls.df = DataFactory()
+        cls.config = ckantest.helpers.Configurer()
+        cls.df = ckantest.factories.DataFactory()
         cls.js_helpers = TwitterJSHelpers()
 
     def teardown(self):
@@ -32,7 +33,7 @@ class TestGetConfigVariables(helpers.FunctionalTestBase):
     def teardown_class(cls):
         cls.config.reset()
         cls.df.destroy()
-        plugins.unload(u'datastore')
+        ckantest.helpers.plugins.unload_datastore()
         plugins.unload(u'twitter')
 
     def test_gets_context(self):

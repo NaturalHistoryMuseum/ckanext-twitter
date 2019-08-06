@@ -6,12 +6,13 @@
 
 import json
 
+import ckantest.factories
+import ckantest.helpers
 import nose
 
 from ckan import plugins
 from ckan.plugins import toolkit
 from ckan.tests import factories, helpers
-from ckanext.twitter.tests.helpers import Configurer
 
 eq_ = nose.tools.eq_
 
@@ -19,7 +20,7 @@ eq_ = nose.tools.eq_
 class TestController(object):
     @classmethod
     def setup_class(cls):
-        cls.config = Configurer()
+        cls.config = ckantest.helpers.Configurer()
         cls.app = helpers._get_test_app()
         plugins.load(u'twitter')
 

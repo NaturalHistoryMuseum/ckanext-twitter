@@ -4,12 +4,14 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
+import ckantest.factories
+import ckantest.helpers
 import nose
+
 from ckan import plugins
 from ckan.tests import helpers
 from ckanext.twitter.lib import (cache_helpers, parsers as twitter_parsers,
                                  twitter_api)
-from ckanext.twitter.tests.helpers import Configurer, DataFactory
 
 eq_ = nose.tools.eq_
 
@@ -18,14 +20,10 @@ class TestTweetGeneration(helpers.FunctionalTestBase):
     @classmethod
     def setup_class(cls):
         super(TestTweetGeneration, cls).setup_class()
-        cls.config = Configurer()
-        try:
-            plugins.load(u'datastore')
-        except:
-            plugins.unload(u'datastore')
-            plugins.load(u'versioned_datastore')
+        cls.config = ckantest.helpers.Configurer()
+        ckantest.helpers.plugins.load_datastore()
         plugins.load(u'twitter')
-        cls.df = DataFactory()
+        cls.df = ckantest.factories.DataFactory()
         cache_helpers.reset_cache()
 
     def teardown(self):
@@ -35,10 +33,7 @@ class TestTweetGeneration(helpers.FunctionalTestBase):
     def teardown_class(cls):
         cls.config.reset()
         cls.df.destroy()
-        if plugins.plugin_loaded(u'datastore'):
-            plugins.unload(u'datastore')
-        if plugins.plugin_loaded(u'versioned_datastore'):
-            plugins.unload(u'versioned_datastore')
+        ckantest.helpers.plugins.unload_datastore()
         plugins.unload(u'twitter')
 
     def test_generates_tweet_if_public(self):

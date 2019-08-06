@@ -2,3 +2,4 @@ nose
 mock
 httpretty
 coveralls
+-e git+https://github.com/NaturalHistoryMuseum/ckantest.git#egg=ckantest
