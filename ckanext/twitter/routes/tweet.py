@@ -44,3 +44,4 @@ def clear(package_id):
     if u'twitter_is_suitable' in session:
         del session[u'twitter_is_suitable']
         session.save()
+    return ''
