@@ -9,7 +9,8 @@ from beaker.cache import cache_regions
 import ckanext.twitter.lib.config_helpers
 from ckan.common import session
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
-from ckanext.twitter.lib import config_helpers, helpers as twitter_helpers, cache_helpers
+from ckanext.twitter import routes
+from ckanext.twitter.lib import config_helpers, helpers as twitter_helpers
 
 
 class TwitterPlugin(SingletonPlugin):
@@ -20,7 +21,7 @@ class TwitterPlugin(SingletonPlugin):
     implements(interfaces.IConfigurer)
     implements(interfaces.IPackageController, inherit=True)
     implements(interfaces.ITemplateHelpers, inherit=True)
-    implements(interfaces.IRoutes, inherit=True)
+    implements(interfaces.IBlueprint, inherit=True)
 
     # IConfigurable
     def configure(self, config):
@@ -59,17 +60,6 @@ class TwitterPlugin(SingletonPlugin):
             u'disable_edit': config_helpers.twitter_disable_edit
             }
 
-    # IRoutes
-    def before_map(self, _map):
-        controller = u'ckanext.twitter.controllers.tweet:TweetController'
-        _map.connect(u'post_tweet', '/dataset/{pkg_id}/tweet',
-                     controller=controller, action=u'send',
-                     conditions={
-                         u'method': [u'POST']
-                         })
-        _map.connect('clear_tweet_cache', '/dataset/{pkg_id}/tweet-clear',
-                     controller=controller, action='clear',
-                     conditions={
-                         'method': ['POST']
-                         })
-        return _map
+    ## IBlueprint
+    def get_blueprint(self):
+        return routes.blueprints
