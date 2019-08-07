@@ -11,6 +11,9 @@ services:
   - redis-server
   - postgresql
 
+addons:
+  postgresql: "9.4"
+
 script: coverage run --source=ckanext.twitter setup.py nosetests --ckan --with-pylons=ckanext/twitter/tests/bin/test.ini --nologcapture
 
 after_success: coveralls
