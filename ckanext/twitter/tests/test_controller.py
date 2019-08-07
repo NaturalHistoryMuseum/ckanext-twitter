@@ -20,22 +20,21 @@ eq_ = nose.tools.eq_
 class TestController(object):
     @classmethod
     def setup_class(cls):
-        cls.config = ckantest.helpers.Configurer()
         cls.app = helpers._get_test_app()
-        plugins.load(u'twitter')
+        cls.config = ckantest.helpers.Configurer(cls.app)
+        cls.config.load_plugins(u'twitter')
 
     @classmethod
     def teardown_class(cls):
         cls.config.reset()
-        plugins.unload(u'twitter')
         helpers.reset_db()
 
     def test_url_created(self):
-        url = toolkit.url_for(u'post_tweet', pkg_id=u'not-a-real-id')
+        url = toolkit.url_for(u'tweet.send', package_id=u'not-a-real-id')
         eq_(url, '/dataset/not-a-real-id/tweet')
 
     def test_url_ok(self):
-        url = toolkit.url_for(u'post_tweet', pkg_id=u'not-a-real-id')
+        url = toolkit.url_for(u'tweet.send', package_id=u'not-a-real-id')
         response = self.app.post(url)
         eq_(response.status_int, 200)
 
@@ -43,7 +42,7 @@ class TestController(object):
         dataset = factories.Dataset(
             notes=u'Test dataset'
             )
-        url = toolkit.url_for(u'post_tweet', pkg_id=dataset[u'id'])
+        url = toolkit.url_for(u'tweet.send', package_id=dataset[u'id'])
         response = self.app.post(url, {
             u'tweet_text': u'this is a test tweet'
             })

@@ -24,7 +24,7 @@ def send(package_id):
     :param package_id: The package ID (for caching).
     :return: str
     '''
-    body = dict(toolkit.request.postvars)
+    body = toolkit.request.values
     text = body.get(u'tweet_text', None)
     if text:
         posted, reason = twitter_api.post_tweet(text, package_id)
