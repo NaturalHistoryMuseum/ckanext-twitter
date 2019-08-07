@@ -6,28 +6,20 @@
 
 import json
 
-import ckantest.factories
-import ckantest.helpers
 import nose
 
-from ckan import plugins
+from ckantest.models import TestBase
 from ckan.plugins import toolkit
-from ckan.tests import factories, helpers
+from ckan.tests import factories
 
 eq_ = nose.tools.eq_
 
 
-class TestController(object):
-    @classmethod
-    def setup_class(cls):
-        cls.app = helpers._get_test_app()
-        cls.config = ckantest.helpers.Configurer(cls.app)
-        cls.config.load_plugins(u'twitter')
-
-    @classmethod
-    def teardown_class(cls):
-        cls.config.reset()
-        helpers.reset_db()
+class TestController(TestBase):
+    plugins = [u'twitter']
+    persist = {
+        u'ckanext.twitter.debug': True
+        }
 
     def test_url_created(self):
         url = toolkit.url_for(u'tweet.send', package_id=u'not-a-real-id')

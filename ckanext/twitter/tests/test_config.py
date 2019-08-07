@@ -4,32 +4,23 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
-import ckantest.factories
-import ckantest.helpers
 import nose
+from ckantest.models import TestBase
 
 import ckanext.twitter.lib.config_helpers as config_helpers
-from ckan import plugins
 from ckan.plugins import toolkit
-from ckan.tests import helpers
 
 eq_ = nose.tools.eq_
 
 
-class TestGetConfigVariables(helpers.FunctionalTestBase):
-    @classmethod
-    def setup_class(cls):
-        super(TestGetConfigVariables, cls).setup_class()
-        cls.config = ckantest.helpers.Configurer()
-        plugins.load(u'twitter')
+class TestGetConfigVariables(TestBase):
+    plugins = [u'twitter']
+    persist = {
+        u'ckanext.twitter.debug': True
+        }
 
     def teardown(self):
         self.config.reset()
-
-    @classmethod
-    def teardown_class(cls):
-        plugins.unload(u'twitter')
-        helpers.reset_db()
 
     def _set_config_value(self, key, has_var, test_value=None):
         if has_var:
