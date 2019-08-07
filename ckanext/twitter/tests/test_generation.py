@@ -5,6 +5,7 @@
 # Created by the Natural History Museum in London, UK
 
 import nose
+import mock
 from ckantest.models import TestBase
 
 from ckanext.twitter.lib import (cache_helpers, parsers as twitter_parsers,
@@ -26,6 +27,10 @@ class TestTweetGeneration(TestBase):
 
     def teardown(self):
         self.config.reset()
+
+    def run(self, result=None):
+        with mock.patch('ckanext.twitter.plugin.session', self._session):
+            super(TestTweetGeneration, self).run(result)
 
     def test_generates_tweet_if_public(self):
         tweet_text = twitter_parsers.generate_tweet(self.data_factory().context,

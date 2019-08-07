@@ -4,10 +4,10 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
+import mock
 import nose
 from ckantest.models import TestBase
 
-from ckan.common import session
 from ckanext.twitter.lib.helpers import TwitterJSHelpers, twitter_pkg_suitable
 
 eq_ = nose.tools.eq_
@@ -27,19 +27,25 @@ class TestGetConfigVariables(TestBase):
     def teardown(self):
         self.config.reset()
 
+    def run(self, result=None):
+        with mock.patch('ckanext.twitter.plugin.session', self._session):
+            super(TestGetConfigVariables, self).run(result)
+
     def test_gets_context(self):
         assert isinstance(self.js_helpers.context, dict)
 
     def test_returns_false_if_not_in_session(self):
-        session.clear()
-        eq_(self.js_helpers.tweet_ready(self.data_factory().public_no_records[u'id']),
-            False)
+        self._session.clear()
+        with mock.patch('ckanext.twitter.lib.helpers.session', self._session):
+            eq_(self.js_helpers.tweet_ready(self.data_factory().public_no_records[u'id']),
+                False)
 
     def test_returns_true_if_is_in_session(self):
-        session.setdefault(u'twitter_is_suitable',
-                           self.data_factory().public_no_records[u'id'])
-        session.save()
-        eq_(self.js_helpers.tweet_ready(self.data_factory().public_no_records[u'id']), True)
+        self._session.setdefault(u'twitter_is_suitable',
+                                 self.data_factory().public_no_records[u'id'])
+        self._session.save()
+        with mock.patch('ckanext.twitter.lib.helpers.session', self._session):
+            eq_(self.js_helpers.tweet_ready(self.data_factory().public_no_records[u'id']), True)
 
     def test_gets_tweet(self):
         self.config.remove([u'ckanext.twitter.new'])

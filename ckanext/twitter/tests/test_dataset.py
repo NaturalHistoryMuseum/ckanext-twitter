@@ -4,6 +4,8 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
+import ckantest.helpers
+import mock
 import nose
 from ckantest.models import TestBase
 
@@ -13,10 +15,14 @@ eq_ = nose.tools.eq_
 
 
 class TestDatasetMetadata(TestBase):
-    plugins = [u'twitter']
+    plugins = [u'twitter', u'datastore']
     persist = {
         u'ckanext.twitter.debug': True
         }
+
+    def run(self, result=None):
+        with mock.patch('ckanext.twitter.plugin.session', self._session):
+            super(TestDatasetMetadata, self).run(result)
 
     def test_gets_dataset_author(self):
         pkg_dict = self.data_factory().public_records
