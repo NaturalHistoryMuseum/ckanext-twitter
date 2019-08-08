@@ -4,8 +4,8 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
-import nose
 import mock
+import nose
 from ckantest.models import TestBase
 
 from ckanext.twitter.lib import (cache_helpers, parsers as twitter_parsers,
@@ -149,7 +149,7 @@ class TestTweetGeneration(TestBase):
     def test_does_tweet_when_new(self):
         # make sure it can't send an actual tweet by removing the credentials
         cache_helpers.reset_cache()
-        self.config.remove([u'ckanext.twitter.key', u'ckanext.twitter.secret',
+        self.config.remove([u'ckanext.twitter.consumer_key', u'ckanext.twitter.consumer_secret',
                             u'ckanext.twitter.token_key',
                             u'ckanext.twitter.token_secret'])
         # turn off debug so it skips that check
@@ -163,5 +163,7 @@ class TestTweetGeneration(TestBase):
         # try to tweet
         tweeted, reason = twitter_api.post_tweet(u'This is a test tweet.',
                                                  pkg_dict[u'id'])
-        eq_(tweeted, False)
+        config_keys = [k for k in self.config.current.keys() if k.startswith('ckanext.twitter')]
+        eq_(tweeted, False, 'Tweet WAS posted! These config options are still present:\n {0}'.format(
+            '\n'.join(config_keys)))
         eq_(reason, u'not authenticated')
