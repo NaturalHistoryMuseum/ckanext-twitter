@@ -35,7 +35,7 @@ pip install -r requirements.txt
 pip install -r dev_requirements.txt
 pip install -e .
 
-echo "ckanext.twitter.consumer_key = $TWITTER_CONSUMER_KEY
-ckanext.twitter.consumer_secret = $TWITTER_CONSUMER_SECRET
-ckanext.twitter.token_key = $TWITTER_TOKEN_KEY
-ckanext.twitter.token_secret = $TWITTER_TOKEN_SECRET" >> $HERE/ckanext/twitter/tests/bin/test.ini
+echo "ckanext.twitter.consumer_key = $T_CONSUMER_KEY
+ckanext.twitter.consumer_secret = $T_CONSUMER_SECRET
+ckanext.twitter.token_key = $T_TOKEN_KEY
+ckanext.twitter.token_secret = $T_TOKEN_SECRET" >> $HERE/ckanext/twitter/tests/bin/test.ini
