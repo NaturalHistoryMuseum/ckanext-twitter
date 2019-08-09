@@ -7,13 +7,12 @@
 import logging
 
 import oauth2
-from beaker.cache import cache_region
 
 from ckanext.twitter.lib import cache_helpers, config_helpers
 logger = logging.getLogger(u'ckanext.twitter')
 
 
-@cache_region(u'twitter', u'client')
+@cache_helpers.cache_manager.cache(u'twitter', u'client')
 def twitter_client():
     '''
     Attempts to create a client for accessing the twitter API using the
@@ -37,15 +36,17 @@ def twitter_authenticate():
     '''
     authenticated = False
     while not authenticated:
-        was_cached = u'client' in cache_helpers.twitter_cache
         client = twitter_client()
         url = u'https://api.twitter.com/1.1/account/verify_credentials.json'
         response, content = client.request(url, u'GET')
         authenticated = response.status == 200
-        if was_cached and not authenticated:
-            cache_helpers.twitter_cache.remove_value(u'client')
-        else:
+        if not authenticated:
+            cache_helpers.cache_manager.invalidate(twitter_client)
             break
+    if authenticated:
+        if any([c.startswith(u'no-') and c.endswith(u'-set') for c in
+                config_helpers.twitter_get_credentials()]):
+            authenticated = False
     return authenticated
 
 

@@ -164,6 +164,7 @@ class TestTweetGeneration(TestBase):
         tweeted, reason = twitter_api.post_tweet(u'This is a test tweet.',
                                                  pkg_dict[u'id'])
         config_keys = [k for k in self.config.current.keys() if k.startswith('ckanext.twitter')]
-        eq_(tweeted, False, 'Tweet WAS posted! These config options are still present:\n {0}'.format(
-            '\n'.join(config_keys)))
+        eq_(tweeted, False,
+            'Tweet WAS posted! These config options are still present:\n {0}'.format(
+                '\n'.join(config_keys)))
         eq_(reason, u'not authenticated')
