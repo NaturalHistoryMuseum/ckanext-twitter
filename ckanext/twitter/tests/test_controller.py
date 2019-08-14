@@ -7,12 +7,10 @@
 import json
 
 import nose
-
 from ckantest.models import TestBase
+
 from ckan.plugins import toolkit
 from ckan.tests import factories
-
-eq_ = nose.tools.eq_
 
 
 class TestController(TestBase):
@@ -23,12 +21,12 @@ class TestController(TestBase):
 
     def test_url_created(self):
         url = toolkit.url_for(u'tweet.send', package_id=u'not-a-real-id')
-        eq_(url, '/dataset/not-a-real-id/tweet')
+        nose.tools.assert_equal(url, '/dataset/not-a-real-id/tweet')
 
     def test_url_ok(self):
         url = toolkit.url_for(u'tweet.send', package_id=u'not-a-real-id')
         response = self.app.post(url)
-        eq_(response.status_int, 200)
+        nose.tools.assert_equal(response.status_int, 200)
 
     def test_debug_post_tweet(self):
         dataset = factories.Dataset(
@@ -39,6 +37,6 @@ class TestController(TestBase):
             u'tweet_text': u'this is a test tweet'
             })
         body = json.loads(response.body)
-        eq_(body[u'reason'], u'debug')
-        eq_(body[u'tweet'], u'this is a test tweet')
-        eq_(body[u'success'], False)
+        nose.tools.assert_equal(body[u'reason'], u'debug')
+        nose.tools.assert_equal(body[u'tweet'], u'this is a test tweet')
+        nose.tools.assert_equal(body[u'success'], False)

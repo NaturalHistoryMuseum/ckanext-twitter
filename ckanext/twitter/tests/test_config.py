@@ -10,8 +10,6 @@ from ckantest.models import TestBase
 import ckanext.twitter.lib.config_helpers as config_helpers
 from ckan.plugins import toolkit
 
-eq_ = nose.tools.eq_
-
 
 class TestGetConfigVariables(TestBase):
     plugins = [u'twitter']
@@ -34,28 +32,28 @@ class TestGetConfigVariables(TestBase):
         test_value = False
         self._set_config_value(u'debug', True, test_value)
         config_value = toolkit.config.get(u'ckanext.twitter.debug')
-        eq_(test_value, config_value)
+        nose.tools.assert_equal(test_value, config_value)
 
     def test_gets_debug_default_when_absent(self):
         default_value = True
         self._set_config_value(u'debug', False)
         config_value = toolkit.config.get(u'ckanext.twitter.debug',
                                           default_value)
-        eq_(default_value, config_value)
+        nose.tools.assert_equal(default_value, config_value)
 
     def test_gets_hours_between_tweets_value_when_present(self):
         test_value = 2
         self._set_config_value(u'hours_between_tweets', True, test_value)
         config_value = config_helpers \
             .twitter_hours_between_tweets()
-        eq_(test_value, config_value)
+        nose.tools.assert_equal(test_value, config_value)
 
     def test_gets_hours_between_tweets_default_when_absent(self):
         default_value = 24
         self._set_config_value(u'hours_between_tweets', False)
         config_value = \
             config_helpers.twitter_hours_between_tweets()
-        eq_(default_value, config_value)
+        nose.tools.assert_equal(default_value, config_value)
 
     def test_gets_credentials_when_present(self):
         test_key = u'test-key-value'
@@ -68,10 +66,10 @@ class TestGetConfigVariables(TestBase):
         self._set_config_value(u'token_secret', True, test_ts)
         ck, cs, tk, ts = \
             config_helpers.twitter_get_credentials()
-        eq_(test_key, ck)
-        eq_(test_secret, cs)
-        eq_(test_tk, tk)
-        eq_(test_ts, ts)
+        nose.tools.assert_equal(test_key, ck)
+        nose.tools.assert_equal(test_secret, cs)
+        nose.tools.assert_equal(test_tk, tk)
+        nose.tools.assert_equal(test_ts, ts)
 
     def test_gets_no_credentials_when_absent(self):
         self._set_config_value(u'consumer_key', False)
@@ -79,20 +77,20 @@ class TestGetConfigVariables(TestBase):
         self._set_config_value(u'token_key', False)
         self._set_config_value(u'token_secret', False)
         ck, cs, tk, ts = config_helpers.twitter_get_credentials()
-        eq_(u'no-consumer-key-set', ck)
-        eq_(u'no-consumer-secret-set', cs)
-        eq_(u'no-token-key-set', tk)
-        eq_(u'no-token-secret-set', ts)
+        nose.tools.assert_equal(u'no-consumer-key-set', ck)
+        nose.tools.assert_equal(u'no-consumer-secret-set', cs)
+        nose.tools.assert_equal(u'no-token-key-set', tk)
+        nose.tools.assert_equal(u'no-token-secret-set', ts)
 
     def test_gets_disable_edit_value_when_present(self):
         test_value = True
         self._set_config_value(u'disable_edit', True, test_value)
         config_value = config_helpers.twitter_disable_edit()
-        eq_(test_value, config_value)
+        nose.tools.assert_equal(test_value, config_value)
 
     def test_gets_disable_edit_default_when_absent(self):
         default_value = False
         self._set_config_value(u'disable_edit', False)
         config_value = \
             config_helpers.twitter_disable_edit()
-        eq_(default_value, config_value)
+        nose.tools.assert_equal(default_value, config_value)
