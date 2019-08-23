@@ -26,7 +26,7 @@ class TestGetConfigVariables(TestBase):
                 u'ckanext.twitter.' + key: test_value
                 })
         else:
-            self.config.remove([u'ckanext.twitter.' + key])
+            self.config.remove(u'ckanext.twitter.' + key)
 
     def test_gets_debug_value_when_present(self):
         test_value = False

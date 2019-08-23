@@ -54,7 +54,7 @@ class TestTweetGeneration(TestBase):
 
     def test_generates_correct_tweet_for_new(self):
         # delete the config value so it's using the default
-        self.config.remove([u'ckanext.twitter.new'])
+        self.config.remove(u'ckanext.twitter.new')
         tweet_text = twitter_parsers.generate_tweet(self.data_factory().context,
                                                     self._public_records[u'id'],
                                                     is_new=True)
@@ -64,7 +64,7 @@ class TestTweetGeneration(TestBase):
 
     def test_generates_correct_tweet_for_updated(self):
         # delete the config value so it's using the default
-        self.config.remove([u'ckanext.twitter.update'])
+        self.config.remove(u'ckanext.twitter.update')
         tweet_text = twitter_parsers.generate_tweet(self.data_factory().context,
                                                     self._public_records[u'id'],
                                                     is_new=False)
@@ -82,7 +82,7 @@ class TestTweetGeneration(TestBase):
 
     def test_shortens_author(self):
         # delete the config value so it's using the default
-        self.config.remove([u'ckanext.twitter.new'])
+        self.config.remove(u'ckanext.twitter.new')
         pkg_dict = self.data_factory().package(author=DataConstants.authors_long)
         tweet_text = twitter_parsers.generate_tweet(self.data_factory().context,
                                                     pkg_dict[u'id'],
@@ -94,7 +94,7 @@ class TestTweetGeneration(TestBase):
 
     def test_shortens_title(self):
         # delete the config value so it's using the default
-        self.config.remove([u'ckanext.twitter.new'])
+        self.config.remove(u'ckanext.twitter.new')
         pkg_dict = self.data_factory().package(title=DataConstants.title_long)
         tweet_text = twitter_parsers.generate_tweet(self.data_factory().context,
                                                     pkg_dict[u'id'],
@@ -105,7 +105,7 @@ class TestTweetGeneration(TestBase):
 
     def test_does_not_exceed_140_chars(self):
         # delete the config value so it's using the default
-        self.config.remove([u'ckanext.twitter.new'])
+        self.config.remove(u'ckanext.twitter.new')
         pkg_dict = self.data_factory().package(author=DataConstants.authors_long,
                                                title=DataConstants.title_long)
         force_truncate = twitter_parsers.generate_tweet(self.data_factory().context,
@@ -121,9 +121,9 @@ class TestTweetGeneration(TestBase):
     def test_does_not_tweet_when_recently_tweeted(self):
         # make sure it can't send an actual tweet by removing the credentials
         cache_helpers.reset_cache()
-        self.config.remove([u'ckanext.twitter.key', u'ckanext.twitter.secret',
+        self.config.remove(u'ckanext.twitter.key', u'ckanext.twitter.secret',
                             u'ckanext.twitter.token_key',
-                            u'ckanext.twitter.token_secret'])
+                            u'ckanext.twitter.token_secret')
         # turn off debug so it skips that check
         self.config.update({
             u'debug': False,
@@ -140,9 +140,9 @@ class TestTweetGeneration(TestBase):
     def test_does_tweet_when_new(self):
         # make sure it can't send an actual tweet by removing the credentials
         cache_helpers.reset_cache()
-        self.config.remove([u'ckanext.twitter.consumer_key', u'ckanext.twitter.consumer_secret',
+        self.config.remove(u'ckanext.twitter.consumer_key', u'ckanext.twitter.consumer_secret',
                             u'ckanext.twitter.token_key',
-                            u'ckanext.twitter.token_secret'])
+                            u'ckanext.twitter.token_secret')
         # turn off debug so it skips that check
         self.config.update({
             u'debug': False,

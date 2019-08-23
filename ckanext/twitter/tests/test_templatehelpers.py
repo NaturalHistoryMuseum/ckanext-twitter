@@ -57,7 +57,7 @@ class TestGetConfigVariables(TestBase):
             nose.tools.assert_equal(self.js_helpers.tweet_ready(pkg_dict[u'id']), True)
 
     def test_gets_tweet(self):
-        self.config.remove([u'ckanext.twitter.new'])
+        self.config.remove(u'ckanext.twitter.new')
         pkg_dict = self.data_factory().package()
         nose.tools.assert_equal(self.js_helpers.get_tweet(pkg_dict[u'id']),
                                 u'New dataset: "{0}" by {1} (0 resource).'.format(
