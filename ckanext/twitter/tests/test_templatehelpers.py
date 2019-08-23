@@ -34,8 +34,8 @@ class TestGetConfigVariables(TestBase):
     def _public_records(self):
         if self.data_factory().packages.get('public_records', None) is None:
             pkg_dict = self.data_factory().package(name='public_records')
-            return self.data_factory().resource(package_id=pkg_dict[u'id'],
-                                                records=DataConstants.records)
+            self.data_factory().resource(package_id=pkg_dict[u'id'],
+                                         records=DataConstants.records)
         return self.data_factory().packages['public_records']
 
     def test_gets_context(self):
