@@ -30,7 +30,9 @@ setup(
     namespace_packages=[u'ckanext', u'ckanext.twitter'],
     include_package_data=True,
     zip_safe=False,
-    install_requires=[],
+    install_requires=[
+        'oauth2==1.9.0.post1',
+        ],
     entry_points= \
         u'''
         [ckan.plugins]
