@@ -31,11 +31,8 @@ paster db init -c /ckan/test-core.ini
 paster datastore set-permissions -c test-core.ini | sudo -u postgres psql
 
 cd $HERE
-pip install -r requirements.txt
 pip install -r dev_requirements.txt
+pip install -r requirements.txt
 pip install -e .
 
-echo "ckanext.twitter.consumer_key = $T_CONSUMER_KEY
-ckanext.twitter.consumer_secret = $T_CONSUMER_SECRET
-ckanext.twitter.token_key = $T_TOKEN_KEY
-ckanext.twitter.token_secret = $T_TOKEN_SECRET" >> $HERE/ckanext/twitter/tests/bin/test.ini
+sed -i "/\[loggers\]/ { N; s/\[loggers\]\n/ckanext.twitter.consumer_key = $T_CONSUMER_KEY\nckanext.twitter.consumer_secret = $T_CONSUMER_SECRET\nckanext.twitter.token_key = $T_TOKEN_KEY\nckanext.twitter.token_secret = $T_TOKEN_SECRET\n\n&/ }" $HERE/ckanext/twitter/tests/bin/test.ini
