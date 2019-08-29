@@ -127,7 +127,7 @@ def get_number_records(context, pkg_id):
 
 def generate_tweet(context, pkg_id, is_new, force_truncate=True):
     '''
-    Generates a standard tweet based on template values in the pylons
+    Generates a standard tweet based on template values in the
     config. Does not post the tweet; just generates and returns the text.
     :param context: The current context.
     :param pkg_id: The ID of the package to tweet about.

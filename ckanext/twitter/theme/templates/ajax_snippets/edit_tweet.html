@@ -8,7 +8,7 @@
                     {{ _('Tweet this?') }}
                 </h3>
             </div>
-            <div class="modal-body" style="max-height: 550px">
+            <div class="modal-body" style="max-height: 80vh">
                 {% block edit_tweet_form %}
                     <form class="form-horizontal" id="edit-tweet-form">
                         {% set data = {'tweet_text': tweet} %} {% set results = {} %} {% set errors = {} %} {% set error_summary = {} %}
