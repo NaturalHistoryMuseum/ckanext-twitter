@@ -1,163 +1,170 @@
-import ckan.plugins as p
+#!/usr/bin/env python
+# encoding: utf-8
+#
+# This file is part of ckanext-twitter
+# Created by the Natural History Museum in London, UK
+
+import mock
 import nose
-from ckan.common import session
-from ckan.tests.pylons_controller import PylonsTestCase
+from ckantest.factories import DataConstants
+from ckantest.models import TestBase
+
 from ckanext.twitter.lib.helpers import TwitterJSHelpers, twitter_pkg_suitable
-from ckanext.twitter.tests.helpers import Configurer, DataFactory
-
-eq_ = nose.tools.eq_
 
 
-class TestGetConfigVariables(PylonsTestCase):
+class TestGetConfigVariables(TestBase):
+    plugins = [u'twitter', u'datastore']
+    persist = {
+        u'ckanext.twitter.debug': True
+        }
+
     @classmethod
     def setup_class(cls):
         super(TestGetConfigVariables, cls).setup_class()
-        p.load('datastore')
-        p.load('twitter')
-        cls.config = Configurer()
-        cls.df = DataFactory()
         cls.js_helpers = TwitterJSHelpers()
 
-    def teardown(self):
-        self.config.reset()
+    def tearDown(self):
+        self.config.soft_reset()
 
-    @classmethod
-    def teardown_class(cls):
-        cls.config.reset()
-        cls.df.destroy()
-        p.unload('datastore')
-        p.unload('twitter')
+    def run(self, result=None):
+        with mock.patch('ckanext.twitter.plugin.session', self._session):
+            super(TestGetConfigVariables, self).run(result)
+
+    @property
+    def _public_records(self):
+        if self.data_factory().packages.get('public_records', None) is None:
+            pkg_dict = self.data_factory().package(name='public_records')
+            self.data_factory().resource(package_id=pkg_dict[u'id'],
+                                         records=DataConstants.records)
+        return self.data_factory().packages['public_records']
 
     def test_gets_context(self):
         assert isinstance(self.js_helpers.context, dict)
 
     def test_returns_false_if_not_in_session(self):
-        session.clear()
-        eq_(self.js_helpers.tweet_ready(self.df.public_no_records['id']),
-            False)
+        self._session.clear()
+        pkg_dict = self.data_factory().package()
+        with mock.patch('ckanext.twitter.lib.helpers.session', self._session):
+            nose.tools.assert_equal(self.js_helpers.tweet_ready(pkg_dict[u'id']),
+                                    False)
 
     def test_returns_true_if_is_in_session(self):
-        session.setdefault('twitter_is_suitable',
-                           self.df.public_no_records['id'])
-        session.save()
-        eq_(self.js_helpers.tweet_ready(self.df.public_no_records['id']), True)
+        pkg_dict = self.data_factory().package()
+        self._session.setdefault(u'twitter_is_suitable',
+                                 pkg_dict[u'id'])
+        self._session.save()
+        with mock.patch('ckanext.twitter.lib.helpers.session', self._session):
+            nose.tools.assert_equal(self.js_helpers.tweet_ready(pkg_dict[u'id']), True)
 
     def test_gets_tweet(self):
-        self.config.remove(['ckanext.twitter.new'])
-        eq_(self.js_helpers.get_tweet(self.df.public_no_records['id']),
-            'New dataset: "A test package" by Author (1 resource).')
+        self.config.remove(u'ckanext.twitter.new')
+        pkg_dict = self.data_factory().package()
+        nose.tools.assert_equal(self.js_helpers.get_tweet(pkg_dict[u'id']),
+                                u'New dataset: "{0}" by {1} (0 resource).'.format(
+                                    DataConstants.title_short,
+                                    DataConstants.authors_short_first))
 
     def test_not_suitable_if_does_not_exist(self):
-        is_suitable = twitter_pkg_suitable(self.df.context, 'not-a-real-id')
-        eq_(is_suitable, False)
+        is_suitable = twitter_pkg_suitable(self.data_factory().context, u'not-a-real-id')
+        nose.tools.assert_equal(is_suitable, False)
 
     def test_not_suitable_if_not_active(self):
-        # exists
-        self.df.reload_pkg_dicts()
-        assert self.df.public_records is not None
-
         # not active
-        self.df.deactivate_package(self.df.public_records['id'])
-        assert self.df.public_records['state'] != 'active'
+        self.data_factory().deactivate_package(self._public_records[u'id'])
+        assert self._public_records[u'state'] != u'active'
 
         # not draft
-        assert self.df.public_records['state'] != 'draft'
+        assert self._public_records[u'state'] != u'draft'
 
         # is suitable
-        is_suitable = twitter_pkg_suitable(self.df.context,
-                                           self.df.public_records['id'])
-        eq_(is_suitable, False)
-
-        # undo the deactivation
-        self.df.activate_package(self.df.public_records['id'])
-
-    def test_not_suitable_if_no_resources(self):
-        # exists
-        self.df.reload_pkg_dicts()
-        assert self.df.public_records is not None
-
-        # active
-        eq_(self.df.public_records['state'], 'active')
-
-        # has no resources
-        self.df.remove_public_resources()
-        eq_(len(self.df.public_records.get('resources', [])), 0)
-
-        # is suitable
-        is_suitable = twitter_pkg_suitable(self.df.context,
-                                           self.df.public_records['id'])
-        eq_(is_suitable, False)
+        is_suitable = twitter_pkg_suitable(self.data_factory().context,
+                                           self._public_records[u'id'])
+        nose.tools.assert_equal(is_suitable, False)
 
         # undo
-        self.df.refresh()
+        self.data_factory().refresh()
+
+    def test_not_suitable_if_no_resources(self):
+        # active
+        nose.tools.assert_equal(self._public_records[u'state'], u'active')
+
+        # has no resources
+        self.data_factory().remove_resources(self._public_records[u'name'])
+        nose.tools.assert_equal(len(self._public_records.get(u'resources', [])), 0)
+
+        # is suitable
+        is_suitable = twitter_pkg_suitable(self.data_factory().context,
+                                           self._public_records[u'id'])
+        nose.tools.assert_equal(is_suitable, False)
+
+        # undo
+        self.data_factory().refresh()
 
     def test_not_suitable_if_no_active_resources(self):
-        pkg_dict = self.df.deactivate_public_resources()
+        pkg_dict = self.data_factory().deactivate_resources(self._public_records[u'name'])
         # exists
         assert pkg_dict is not None
 
         # active
-        eq_(pkg_dict['state'], 'active')
+        nose.tools.assert_equal(pkg_dict[u'state'], u'active')
 
         # has resources
-        assert len(pkg_dict['resources']) > 0
+        assert len(pkg_dict[u'resources']) > 0
 
         # resources are not active
-        active_resources = [r['state'] == 'active' for r in
-                            pkg_dict['resources']]
-        eq_(any(active_resources), False,
-            '{0}/{1} resources still active'.format(sum(active_resources),
-                                                    len(active_resources)))
+        active_resources = [r[u'state'] == u'active' for r in
+                            pkg_dict[u'resources']]
+        nose.tools.assert_equal(any(active_resources), False,
+                                u'{0}/{1} resources still active'.format(sum(active_resources),
+                                                                         len(active_resources)))
 
         # is suitable
-        is_suitable = twitter_pkg_suitable(self.df.context,
+        is_suitable = twitter_pkg_suitable(self.data_factory().context,
                                            None, pkg_dict)
-        eq_(is_suitable, False)
+        nose.tools.assert_equal(is_suitable, False)
 
     def test_not_suitable_if_private(self):
-        # exists
-        self.df.reload_pkg_dicts()
-        assert self.df.private_records is not None
+        pkg_dict = self.data_factory().package(name=u'private_records', private=True)
+        self.data_factory().resource(package_id=pkg_dict[u'id'],
+                                     records=DataConstants.records)
 
         # active
-        eq_(self.df.private_records['state'], 'active')
+        nose.tools.assert_equal(self.data_factory().packages[u'private_records'][u'state'],
+                                u'active')
 
         # has resources
-        assert len(self.df.private_records['resources']) > 0
+        assert len(self.data_factory().packages[u'private_records'][u'resources']) > 0
 
         # resources are active
-        active_resources = [r['state'] == 'active' for r in
-                            self.df.private_records['resources']]
-        eq_(any(active_resources), True)
+        active_resources = [r[u'state'] == u'active' for r in
+                            self.data_factory().packages[u'private_records'][u'resources']]
+        nose.tools.assert_equal(any(active_resources), True)
 
         # is private
-        eq_(self.df.private_records.get('private', False), True)
+        nose.tools.assert_equal(
+            self.data_factory().packages[u'private_records'].get(u'private', False), True)
 
         # is suitable
-        is_suitable = twitter_pkg_suitable(self.df.context,
-                                           self.df.private_records['id'])
-        eq_(is_suitable, False)
+        is_suitable = twitter_pkg_suitable(self.data_factory().context,
+                                           self.data_factory().packages[u'private_records'][u'id'])
+        nose.tools.assert_equal(is_suitable, False)
 
     def test_otherwise_suitable(self):
-        # exists
-        self.df.reload_pkg_dicts()
-        assert self.df.public_records is not None
-
         # active
-        eq_(self.df.public_records['state'], 'active')
+        nose.tools.assert_equal(self._public_records[u'state'], u'active')
 
         # has resources
-        assert len(self.df.public_records['resources']) > 0
+        assert len(self._public_records[u'resources']) > 0
 
         # resources are active
-        active_resources = [r['state'] == 'active' for r in
-                            self.df.public_records['resources']]
-        eq_(any(active_resources), True)
+        active_resources = [r[u'state'] == u'active' for r in
+                            self._public_records[u'resources']]
+        nose.tools.assert_equal(any(active_resources), True)
 
         # not private
-        eq_(self.df.public_records.get('private', False), False)
+        nose.tools.assert_equal(self._public_records.get(u'private', False), False)
 
         # is suitable
-        is_suitable = twitter_pkg_suitable(self.df.context,
-                                           self.df.public_records['id'])
-        eq_(is_suitable, True)
+        is_suitable = twitter_pkg_suitable(self.data_factory().context,
+                                           self._public_records[u'id'])
+        nose.tools.assert_equal(is_suitable, True)

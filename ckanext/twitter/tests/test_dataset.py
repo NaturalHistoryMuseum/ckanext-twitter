@@ -1,63 +1,66 @@
-import ckan.plugins as p
+#!/usr/bin/env python
+# encoding: utf-8
+#
+# This file is part of ckanext-twitter
+# Created by the Natural History Museum in London, UK
+
+import mock
 import nose
-from ckan.tests.pylons_controller import PylonsTestCase
+from ckantest.factories import DataConstants
+from ckantest.models import TestBase
+
 from ckanext.twitter.lib import (parsers as twitter_parsers)
-from ckanext.twitter.tests.helpers import Configurer, DataFactory
-
-eq_ = nose.tools.eq_
 
 
-class TestDatasetMetadata(PylonsTestCase):
-    @classmethod
-    def setup_class(cls):
-        super(TestDatasetMetadata, cls).setup_class()
-        cls.config = Configurer()
-        p.load('datastore')
-        p.load('twitter')
-        cls.df = DataFactory()
+class TestDatasetMetadata(TestBase):
+    plugins = [u'twitter', u'datastore']
+    persist = {
+        u'ckanext.twitter.debug': True
+        }
 
-    @classmethod
-    def teardown_class(cls):
-        cls.config.reset()
-        cls.df.destroy()
-        p.unload('datastore')
-        p.unload('twitter')
+    def run(self, result=None):
+        with mock.patch('ckanext.twitter.plugin.session', self._session):
+            super(TestDatasetMetadata, self).run(result)
+
+    @property
+    def _public_records(self):
+        if self.data_factory().packages.get('public_records', None) is None:
+            pkg_dict = self.data_factory().package(name='public_records')
+            self.data_factory().resource(package_id=pkg_dict[u'id'],
+                                                records=DataConstants.records)
+        return self.data_factory().packages['public_records']
 
     def test_gets_dataset_author(self):
-        pkg_dict = self.df.public_records
-        eq_(pkg_dict['author'], 'Test Author',
-            'Author is actually: {0}'.format(
-                    pkg_dict.get('author', 'no author set')))
+        nose.tools.assert_equal(self._public_records[u'author'], DataConstants.authors_short,
+                                u'Author is actually: {0}'.format(
+                                    self._public_records.get(u'author', u'no author set')))
 
     def test_gets_dataset_title(self):
-        pkg_dict = self.df.public_records
-        eq_(pkg_dict['title'], u'A test package',
-            'Title is actually: {0}'.format(
-                    pkg_dict.get('title', 'no title set')))
+        nose.tools.assert_equal(self._public_records[u'title'], DataConstants.title_short,
+                                u'Title is actually: {0}'.format(
+                                    self._public_records.get(u'title', u'no title set')))
 
     def test_gets_dataset_number_of_records_if_has_records(self):
-        pkg_dict = self.df.public_records
-        n_records = twitter_parsers.get_number_records(self.df.context,
-                                                       pkg_dict['id'])
-        eq_(n_records, 5,
-            'Calculated number of records: {0}\nActual number: 5'.format(
-                    n_records))
+        n_records = twitter_parsers.get_number_records(self.data_factory().context,
+                                                       self._public_records[u'id'])
+        nose.tools.assert_equal(n_records, 5,
+                                u'Calculated number of records: {0}\nActual number: 5'.format(
+                                    n_records))
 
     def test_gets_dataset_number_of_records_if_no_records(self):
-        pkg_dict = self.df.public_no_records
-        n_records = twitter_parsers.get_number_records(self.df.context,
-                                                       pkg_dict['id'])
-        eq_(n_records, 0,
-            'Calculated number of records: {0}\nActual number: 0'.format(
-                    n_records))
+        pkg_dict = self.data_factory().package()
+        n_records = twitter_parsers.get_number_records(self.data_factory().context,
+                                                       pkg_dict[u'id'])
+        nose.tools.assert_equal(n_records, 0,
+                                u'Calculated number of records: {0}\nActual number: 0'.format(
+                                    n_records))
 
     def test_gets_is_private(self):
-        pkg_dict = self.df.public_records
-        if pkg_dict.get('private', None) is None:
-            access = 'unknown'
-        elif pkg_dict.get('private', None):
-            access = 'private'
+        if self._public_records.get(u'private', None) is None:
+            access = u'unknown'
+        elif self._public_records.get(u'private', None):
+            access = u'private'
         else:
-            access = 'public'
-        eq_(pkg_dict['private'], False,
-            'Package is actually: {0}'.format(access))
+            access = u'public'
+        nose.tools.assert_equal(self._public_records[u'private'], False,
+                                u'Package is actually: {0}'.format(access))

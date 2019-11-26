@@ -1,5 +1,10 @@
+#!/usr/bin/env python
+# encoding: utf-8
+#
+# This file is part of ckanext-twitter
+# Created by the Natural History Museum in London, UK
+
 from ckan.common import session
-from ckan.logic import NotFound, get_action
 from ckan.plugins import toolkit
 from ckanext.twitter.lib import (parsers as twitter_parsers)
 
@@ -16,9 +21,9 @@ class TwitterJSHelpers(object):
         :return: dict
         '''
         try:
-            c = toolkit.c.pylons.__dict__
+            c = toolkit.c.__dict__
         except AttributeError:
-            c = dict(toolkit.c.pylons)
+            c = dict(toolkit.c)
         return c
 
     def _get_package(self, package_name_or_id):
@@ -28,8 +33,8 @@ class TwitterJSHelpers(object):
         name or ID.
         :return: dict
         '''
-        return get_action('package_show')(self.context, {
-            'id': package_name_or_id
+        return toolkit.get_action(u'package_show')(self.context, {
+            u'id': package_name_or_id
             })
 
     def _is_new(self, package_id):
@@ -39,8 +44,8 @@ class TwitterJSHelpers(object):
         :param package_id: The ID of the package to check.
         :return: boolean
         '''
-        revisions = get_action('package_activity_list')(self.context, {
-            'id': package_id
+        revisions = toolkit.get_action(u'package_activity_list')(self.context, {
+            u'id': package_id
             })
         return len(revisions) <= 3
 
@@ -52,7 +57,7 @@ class TwitterJSHelpers(object):
         :param package_id: The package ID.
         :return: boolean
         '''
-        in_session = session.pop('twitter_is_suitable', '') == package_id
+        in_session = session.pop(u'twitter_is_suitable', u'') == package_id
         return in_session
 
     def get_tweet(self, package_id):
@@ -65,7 +70,7 @@ class TwitterJSHelpers(object):
                                               self._is_new(package_id))
 
 
-def twitter_pkg_suitable(context, pkg_id, pkg_dict = None):
+def twitter_pkg_suitable(context, pkg_id, pkg_dict=None):
     '''
     Various tests to determine if a package is suitable for tweeting about,
     e.g. it's active & has resources.
@@ -79,19 +84,19 @@ def twitter_pkg_suitable(context, pkg_id, pkg_dict = None):
         package = pkg_dict
     else:
         try:
-            package = get_action('package_show')(context, {
-                'id': pkg_id
+            package = toolkit.get_action(u'package_show')(context, {
+                u'id': pkg_id
                 })
-        except NotFound:
+        except toolkit.ObjectNotFound:
             return False
-    if package.get('state', '') != 'active' and package.get('state',
-                                                            '') != 'draft':
+    if package.get(u'state', u'') != u'active' and package.get(u'state',
+                                                               u'') != u'draft':
         return False
-    resources = package.get('resources', [])
+    resources = package.get(u'resources', [])
     if len(resources) == 0:
         return False
-    if not any([r.get('state', '') == 'active' for r in resources]):
+    if not any([r.get(u'state', u'') == u'active' for r in resources]):
         return False
-    if package.get('private', False):
+    if package.get(u'private', False):
         return False
     return True
