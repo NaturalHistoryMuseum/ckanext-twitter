@@ -1,45 +1,42 @@
+#!/usr/bin/env python
+# encoding: utf-8
+#
+# This file is part of ckanext-twitter
+# Created by the Natural History Museum in London, UK
+
 import json
 
-import ckan.plugins
 import nose
-from ckan.lib.helpers import url_for
-from ckan.new_tests import factories, helpers
-from ckanext.twitter.tests.helpers import Configurer
+from ckantest.models import TestBase
 
-eq_ = nose.tools.eq_
+from ckan.plugins import toolkit
+from ckan.tests import factories
 
 
-class TestController(object):
-    @classmethod
-    def setup_class(cls):
-        cls.config = Configurer()
-        cls.app = helpers._get_test_app()
-        ckan.plugins.load('twitter')
-
-    @classmethod
-    def teardown_class(cls):
-        cls.config.reset()
-        ckan.plugins.unload('twitter')
-        helpers.reset_db()
+class TestController(TestBase):
+    plugins = [u'twitter']
+    persist = {
+        u'ckanext.twitter.debug': True
+        }
 
     def test_url_created(self):
-        url = url_for('post_tweet', pkg_id = 'not-a-real-id')
-        eq_(url, '/dataset/not-a-real-id/tweet')
+        url = toolkit.url_for(u'tweet.send', package_id=u'not-a-real-id')
+        nose.tools.assert_equal(url, '/dataset/not-a-real-id/tweet')
 
     def test_url_ok(self):
-        url = url_for('post_tweet', pkg_id = 'not-a-real-id')
+        url = toolkit.url_for(u'tweet.send', package_id=u'not-a-real-id')
         response = self.app.post(url)
-        eq_(response.status_int, 200)
+        nose.tools.assert_equal(response.status_int, 200)
 
     def test_debug_post_tweet(self):
         dataset = factories.Dataset(
-                notes = 'Test dataset'
-                )
-        url = url_for('post_tweet', pkg_id = dataset['id'])
+            notes=u'Test dataset'
+            )
+        url = toolkit.url_for(u'tweet.send', package_id=dataset[u'id'])
         response = self.app.post(url, {
-            'tweet_text': 'this is a test tweet'
+            u'tweet_text': u'this is a test tweet'
             })
         body = json.loads(response.body)
-        eq_(body['reason'], 'debug')
-        eq_(body['tweet'], 'this is a test tweet')
-        eq_(body['success'], False)
+        nose.tools.assert_equal(body[u'reason'], u'debug')
+        nose.tools.assert_equal(body[u'tweet'], u'this is a test tweet')
+        nose.tools.assert_equal(body[u'success'], False)
