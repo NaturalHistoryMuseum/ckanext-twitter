@@ -14,18 +14,6 @@ class TwitterJSHelpers(object):
     A class defining various methods to pass into the templates as helpers.
     '''
 
-    @property
-    def context(self):
-        '''
-        Convenience wrapper to retrieve the current context as a dictionary.
-        :return: dict
-        '''
-        try:
-            c = toolkit.c.__dict__
-        except AttributeError:
-            c = dict(toolkit.c)
-        return c
-
     def _get_package(self, package_name_or_id):
         '''
         Gets the package dictionary.
@@ -33,7 +21,7 @@ class TwitterJSHelpers(object):
         name or ID.
         :return: dict
         '''
-        return toolkit.get_action(u'package_show')(self.context, {
+        return toolkit.get_action(u'package_show')({}, {
             u'id': package_name_or_id
             })
 
@@ -44,7 +32,7 @@ class TwitterJSHelpers(object):
         :param package_id: The ID of the package to check.
         :return: boolean
         '''
-        revisions = toolkit.get_action(u'package_activity_list')(self.context, {
+        revisions = toolkit.get_action(u'package_activity_list')({}, {
             u'id': package_id
             })
         return len(revisions) <= 3
@@ -66,7 +54,7 @@ class TwitterJSHelpers(object):
         :param package_id: The package ID.
         :return: str
         '''
-        return twitter_parsers.generate_tweet(self.context, package_id,
+        return twitter_parsers.generate_tweet({}, package_id,
                                               self._is_new(package_id))
 
 
