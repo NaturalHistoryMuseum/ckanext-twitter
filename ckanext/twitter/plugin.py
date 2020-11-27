@@ -41,7 +41,7 @@ class TwitterPlugin(SingletonPlugin):
         # Add templates
         toolkit.add_template_directory(config, u'theme/templates')
         # Add resources
-        toolkit.add_resource(u'theme/fanstatic', u'ckanext-twitter')
+        toolkit.add_resource(u'theme/assets', u'ckanext-twitter')
 
     # IPackageController
     def after_update(self, context, pkg_dict):
