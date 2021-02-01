@@ -4,7 +4,7 @@
 
 [![Travis](https://img.shields.io/travis/NaturalHistoryMuseum/ckanext-twitter/master.svg?style=flat-square)](https://travis-ci.org/NaturalHistoryMuseum/ckanext-twitter)
 [![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-twitter/master.svg?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-twitter)
-[![CKAN](https://img.shields.io/badge/ckan-2.9.0a-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
+[![CKAN](https://img.shields.io/badge/ckan-2.9.1-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 
 _A CKAN extension that enables users to post a tweet every time a dataset is created or updated._
 
@@ -141,13 +141,26 @@ Your tweet would then read:
 
 > New dataset: "Dataset Name" by Diplodocus et al. (2 resources)
 
+
 # Testing
+_Note that the tests shouldn't make any calls to Twitter's API and won't post any tweets!_
 
-_None of the tests should actually post any tweets to Twitter._
+To run the tests in this extension, there is a Docker compose configuration available in this
+repository to make it easy.
 
-They will test authentication, but _nothing should be posted_.
+To run the tests against ckan 2.9.x on Python2:
 
-To run the tests, use nosetests inside your virtualenv. The `--nocapture` flag will allow you to see the tweets being printed to the console instead of posted to twitter (as the tests are mostly run in debug mode) but will also print a lot of statements about database manipulation.
+1. Build the required images
 ```bash
-nosetests --ckan --with-pylons=$TEST_CONFIG_FILE --where=$INSTALL_FOLDER/src/ckanext-twitter --nologcapture --nocapture
+docker-compose build
 ```
+
+2. Then run the tests.
+   The root of the repository is mounted into the ckan container as a volume by the Docker compose
+   configuration, so you should only need to rebuild the ckan image if you change the extension's
+   dependencies.
+```bash
+docker-compose run ckan
+```
+
+The ckan image uses the Dockerfile in the `docker/` folder which is based on `openknowledge/ckan-dev:2.9-py2`.

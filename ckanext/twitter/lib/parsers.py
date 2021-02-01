@@ -91,7 +91,7 @@ def truncate_field(value, char_limit):
         parts = value.split(u' ')
         for p in parts:
             if sum([len(i) + 1 for i in truncated]) + len(p) + len(
-                    marker) < char_limit:
+                marker) < char_limit:
                 truncated.append(p)
             else:
                 break
@@ -108,7 +108,7 @@ def get_number_records(context, pkg_id):
     '''
     pkg = toolkit.get_action(u'package_show')(context, {
         u'id': pkg_id
-        })
+    })
     resources = pkg.get(u'resources', None)
     if not resources or len(resources) == 0:
         return 0
@@ -118,7 +118,7 @@ def get_number_records(context, pkg_id):
         try:
             resource_data = toolkit.get_action(u'datastore_search')(context, {
                 u'resource_id': rid
-                })
+            })
             total += resource_data.get(u'total', 0)
         except (toolkit.ObjectNotFound, SearchIndexError):
             pass
@@ -140,7 +140,7 @@ def generate_tweet(context, pkg_id, is_new, force_truncate=True):
     '''
     pkg = toolkit.get_action(u'package_show')(context, {
         u'id': pkg_id
-        })
+    })
     if pkg.get(u'private', False):
         return
     format_string = config_helpers.twitter_new_format() \

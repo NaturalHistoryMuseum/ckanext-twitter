@@ -6,7 +6,7 @@
 
 from ckan.common import session
 from ckan.plugins import toolkit
-from ckanext.twitter.lib import (parsers as twitter_parsers)
+from ckanext.twitter.lib import parsers as twitter_parsers
 
 
 class TwitterJSHelpers(object):

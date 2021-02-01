@@ -5,6 +5,7 @@
 # Created by the Natural History Museum in London, UK
 
 import logging
+from contextlib2 import suppress
 
 import oauth2
 
@@ -41,7 +42,9 @@ def twitter_authenticate():
         response, content = client.request(url, u'GET')
         authenticated = response.status == 200
         if not authenticated:
-            cache_helpers.cache_manager.invalidate(twitter_client)
+            # if the client isn't in the cache we don't care
+            with suppress(KeyError):
+                cache_helpers.cache_manager.invalidate(twitter_client)
             break
     if authenticated:
         if any([c.startswith(u'no-') and c.endswith(u'-set') for c in

@@ -6,7 +6,7 @@
 
 from setuptools import find_packages, setup
 
-__version__ = u'1.0.0-alpha'
+__version__ = u'1.0.1'
 
 with open(u'README.md', u'r') as f:
     __long_description__ = f.read()
@@ -31,12 +31,12 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'oauth2==1.9.0.post1',
-        ],
+        u'oauth2==1.9.0.post1',
+    ],
     entry_points= \
         u'''
         [ckan.plugins]
             twitter=ckanext.twitter.plugin:TwitterPlugin
 
         ''',
-    )
+)
