@@ -5,6 +5,7 @@
 [![Travis](https://img.shields.io/travis/NaturalHistoryMuseum/ckanext-twitter/master.svg?style=flat-square)](https://travis-ci.org/NaturalHistoryMuseum/ckanext-twitter)
 [![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-twitter/master.svg?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-twitter)
 [![CKAN](https://img.shields.io/badge/ckan-2.9.1-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
+[![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
 
 _A CKAN extension that enables users to post a tweet every time a dataset is created or updated._
 
@@ -75,7 +76,7 @@ Tweets are generated using [Jinja2](http://jinja.pocoo.org) and use tokens deriv
 Name|Description|Default
 --|--|--
 `ckanext.twitter.new`|Template for tweets about new datasets|`New dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`
-`ckanext.twitter.updated`|Template for tweets about updated datasets|`Updated dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`  
+`ckanext.twitter.updated`|Template for tweets about updated datasets|`Updated dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`
 
 If your config is created dynamically using Jinja2, you will have to wrap any custom template in `{% raw %}{% endraw %}` tags and **add a newline after it**, e.g.:
 ```ini
@@ -90,7 +91,7 @@ ckanext.twitter...
 Name|Description|Options|Default
 --|--|--|--
 `ckanext.twitter.debug`|Is in debug mode; overrides global debug flag if specified|True, False|False
-`ckanext.twitter.hours_between_tweets`|Number of hours between tweets about the _same dataset_ (to prevent spamming)||24  
+`ckanext.twitter.hours_between_tweets`|Number of hours between tweets about the _same dataset_ (to prevent spamming)||24
 `ckanext.twitter.disable_edit`|If true, users will not be able to edit the tweet about their dataset before it is posted (though they can still decide not to post it)|True, False|False
 
 
@@ -148,7 +149,7 @@ _Note that the tests shouldn't make any calls to Twitter's API and won't post an
 To run the tests in this extension, there is a Docker compose configuration available in this
 repository to make it easy.
 
-To run the tests against ckan 2.9.x on Python2:
+To run the tests against ckan 2.9.x on Python3:
 
 1. Build the required images
 ```bash
@@ -163,4 +164,4 @@ docker-compose build
 docker-compose run ckan
 ```
 
-The ckan image uses the Dockerfile in the `docker/` folder which is based on `openknowledge/ckan-dev:2.9-py2`.
+The ckan image uses the Dockerfile in the `docker/` folder which is based on `openknowledge/ckan-dev:2.9`.
