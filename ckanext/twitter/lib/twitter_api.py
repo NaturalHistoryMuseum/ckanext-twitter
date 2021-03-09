@@ -5,19 +5,22 @@
 # Created by the Natural History Museum in London, UK
 
 import logging
+from contextlib import suppress
 
 import oauth2
 
 from ckanext.twitter.lib import cache_helpers, config_helpers
-logger = logging.getLogger(u'ckanext.twitter')
+
+logger = logging.getLogger('ckanext.twitter')
 
 
-@cache_helpers.cache_manager.cache(u'twitter', u'client')
+@cache_helpers.cache_manager.cache('twitter', 'client')
 def twitter_client():
     '''
-    Attempts to create a client for accessing the twitter API using the
-    credentials specified in the configuration file. Does not test for
-    success. Caches the resulting client in the 'twitter' cache.
+    Attempts to create a client for accessing the twitter API using the credentials specified in the
+    configuration file. Does not test for success. Caches the resulting client in the 'twitter'
+    cache.
+
     :return: oauth2.Client
     '''
     consumer_key, consumer_secret, token_key, token_secret = \
@@ -37,14 +40,16 @@ def twitter_authenticate():
     authenticated = False
     while not authenticated:
         client = twitter_client()
-        url = u'https://api.twitter.com/1.1/account/verify_credentials.json'
-        response, content = client.request(url, u'GET')
+        url = 'https://api.twitter.com/1.1/account/verify_credentials.json'
+        response, content = client.request(url, 'GET')
         authenticated = response.status == 200
         if not authenticated:
-            cache_helpers.cache_manager.invalidate(twitter_client)
+            # if the client isn't in the cache we don't care
+            with suppress(KeyError):
+                cache_helpers.cache_manager.invalidate(twitter_client)
             break
     if authenticated:
-        if any([c.startswith(u'no-') and c.endswith(u'-set') for c in
+        if any([c.startswith('no-') and c.endswith('-set') for c in
                 config_helpers.twitter_get_credentials()]):
             authenticated = False
     return authenticated
@@ -61,32 +66,31 @@ def post_tweet(tweet_text, pkg_id):
     :return: boolean, str
     '''
     if config_helpers.twitter_is_debug():
-        logger.debug(u'Not posted (debug): ' + tweet_text)
-        return False, u'debug'
+        logger.debug(f'Not posted (debug): {tweet_text}')
+        return False, 'debug'
 
     # if not enough time has passed since the last tweet
     if not cache_helpers.expired(pkg_id):
-        logger.debug(u'Not posted (insufficient rest period): ' + tweet_text)
-        return False, u'insufficient rest period'
+        logger.debug(f'Not posted (insufficient rest period): {tweet_text}')
+        return False, 'insufficient rest period'
 
     # if we can't authenticate
     if not twitter_authenticate():
-        logger.debug(u'Not posted (not authenticated): ' + tweet_text)
-        return False, u'not authenticated'
+        logger.debug(f'Not posted (not authenticated): {tweet_text}')
+        return False, 'not authenticated'
 
     # try to actually post
     client = twitter_client()
-    url = u'https://api.twitter.com/1.1/statuses/update.json'
+    url = 'https://api.twitter.com/1.1/statuses/update.json'
     params = {
-        u'status': tweet_text
-        }
-    request = oauth2.Request(method=u'POST', url=url, parameters=params)
+        'status': tweet_text
+    }
+    request = oauth2.Request(method='POST', url=url, parameters=params)
     postdata = request.to_postdata()
-    response, content = client.request(url, u'POST', postdata)
+    response, content = client.request(url, 'POST', postdata)
     if response.status == 200:
         cache_helpers.cache(pkg_id)
-        logger.debug(u'Posted successfully: ' + tweet_text)
+        logger.debug(f'Posted successfully: {tweet_text}')
     else:
-        logger.debug(u'Not posted (tweet unsuccessful): ' + tweet_text)
-    return response.status == 200, u'{0} {1}'.format(response.status,
-                                                     response.reason)
+        logger.debug(f'Not posted (tweet unsuccessful): {tweet_text}')
+    return response.status == 200, f'{response.status} {response.reason}'

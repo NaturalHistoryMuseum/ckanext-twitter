@@ -4,19 +4,19 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
-from beaker.cache import CacheManager, cache_managers
-from beaker.util import parse_cache_config_options
 from datetime import datetime as dt
 
+from beaker.cache import CacheManager, cache_managers
+from beaker.util import parse_cache_config_options
 from ckanext.twitter.lib import config_helpers
 
 cache_opts = {
-    u'cache.type': u'memory',
-    u'cache.lock_dir': u'/tmp/cache/lock'
-    }
+    'cache.type': 'memory',
+    'cache.lock_dir': '/tmp/cache/lock'
+}
 
 cache_manager = CacheManager(**parse_cache_config_options(cache_opts))
-twitter_cache = cache_manager.get_cache(u'twitter')
+twitter_cache = cache_manager.get_cache('twitter')
 
 
 def cache(pkg_id):

@@ -1,0 +1,8 @@
+confirm-tweet:
+  output: ckanext-twitter/%(version)s_confirm-tweet.js
+  filters: rjsmin
+  extra:
+    preload:
+      - base/main
+  contents:
+    - scripts/modules/confirm-tweet.js

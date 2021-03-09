@@ -6,10 +6,10 @@
 
 from ckan.common import session
 from ckan.plugins import toolkit
-from ckanext.twitter.lib import (parsers as twitter_parsers)
+from ckanext.twitter.lib import parsers as twitter_parsers
 
 
-class TwitterJSHelpers(object):
+class TwitterJSHelpers:
     '''
     A class defining various methods to pass into the templates as helpers.
     '''
@@ -21,9 +21,9 @@ class TwitterJSHelpers(object):
         name or ID.
         :return: dict
         '''
-        return toolkit.get_action(u'package_show')({}, {
-            u'id': package_name_or_id
-            })
+        return toolkit.get_action('package_show')({}, {
+            'id': package_name_or_id
+        })
 
     def _is_new(self, package_id):
         '''
@@ -32,9 +32,9 @@ class TwitterJSHelpers(object):
         :param package_id: The ID of the package to check.
         :return: boolean
         '''
-        revisions = toolkit.get_action(u'package_activity_list')({}, {
-            u'id': package_id
-            })
+        revisions = toolkit.get_action('package_activity_list')({}, {
+            'id': package_id
+        })
         return len(revisions) <= 3
 
     def tweet_ready(self, package_id):
@@ -45,7 +45,7 @@ class TwitterJSHelpers(object):
         :param package_id: The package ID.
         :return: boolean
         '''
-        in_session = session.pop(u'twitter_is_suitable', u'') == package_id
+        in_session = session.pop('twitter_is_suitable', '') == package_id
         return in_session
 
     def get_tweet(self, package_id):
@@ -54,37 +54,36 @@ class TwitterJSHelpers(object):
         :param package_id: The package ID.
         :return: str
         '''
-        return twitter_parsers.generate_tweet({}, package_id,
-                                              self._is_new(package_id))
+        return twitter_parsers.generate_tweet({}, package_id, self._is_new(package_id))
 
 
 def twitter_pkg_suitable(context, pkg_id, pkg_dict=None):
     '''
-    Various tests to determine if a package is suitable for tweeting about,
-    e.g. it's active & has resources.
+    Various tests to determine if a package is suitable for tweeting about, e.g. it's active & has
+    resources.
+
     :param context: The current context.
     :param pkg_id: The package ID.
-    :param pkg_dict: Optionally provided instead of pkg_id to avoid
-    requesting from the API. Not recommended - provided as a test helper.
+    :param pkg_dict: Optionally provided instead of pkg_id to avoid requesting from the API. Not
+                     recommended - provided as a test helper.
     :return: boolean
     '''
     if pkg_dict:
         package = pkg_dict
     else:
         try:
-            package = toolkit.get_action(u'package_show')(context, {
-                u'id': pkg_id
-                })
+            package = toolkit.get_action('package_show')(context, {
+                'id': pkg_id
+            })
         except toolkit.ObjectNotFound:
             return False
-    if package.get(u'state', u'') != u'active' and package.get(u'state',
-                                                               u'') != u'draft':
+    if package.get('state', '') != 'active' and package.get('state', '') != 'draft':
         return False
-    resources = package.get(u'resources', [])
+    resources = package.get('resources', [])
     if len(resources) == 0:
         return False
-    if not any([r.get(u'state', u'') == u'active' for r in resources]):
+    if not any([r.get('state', '') == 'active' for r in resources]):
         return False
-    if package.get(u'private', False):
+    if package.get('private', False):
         return False
     return True

@@ -5,10 +5,10 @@
 # Created by the Natural History Museum in London, UK
 
 from beaker.cache import cache_regions
-
-import ckanext.twitter.lib.config_helpers
 from ckan.common import session
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
+
+import ckanext.twitter.lib.config_helpers
 from ckanext.twitter import routes
 from ckanext.twitter.lib import config_helpers, helpers as twitter_helpers
 
@@ -26,39 +26,37 @@ class TwitterPlugin(SingletonPlugin):
     # IConfigurable
     def configure(self, config):
         cache_regions.update({
-            u'twitter': {
-                u'expire':
-                    ckanext.twitter.lib.config_helpers
-                        .twitter_hours_between_tweets(),
-                u'type': u'memory',
-                u'enabled': True,
-                u'key_length': 250
-                }
-            })
+            'twitter': {
+                'expire':
+                    ckanext.twitter.lib.config_helpers.twitter_hours_between_tweets(),
+                'type': 'memory',
+                'enabled': True,
+                'key_length': 250
+            }
+        })
 
     # IConfigurer
     def update_config(self, config):
         # Add templates
-        toolkit.add_template_directory(config, u'theme/templates')
+        toolkit.add_template_directory(config, 'theme/templates')
         # Add resources
-        toolkit.add_resource(u'theme/fanstatic', u'ckanext-twitter')
+        toolkit.add_resource('theme/assets', 'ckanext-twitter')
 
     # IPackageController
     def after_update(self, context, pkg_dict):
-        is_suitable = twitter_helpers.twitter_pkg_suitable(context,
-                                                           pkg_dict[u'id'])
+        is_suitable = twitter_helpers.twitter_pkg_suitable(context, pkg_dict['id'])
         if is_suitable:
-            session.setdefault(u'twitter_is_suitable', pkg_dict[u'id'])
+            session.setdefault('twitter_is_suitable', pkg_dict['id'])
             session.save()
 
     # ITemplateHelpers
     def get_helpers(self):
         js_helpers = twitter_helpers.TwitterJSHelpers()
         return {
-            u'tweet_ready': js_helpers.tweet_ready,
-            u'get_tweet': js_helpers.get_tweet,
-            u'disable_edit': config_helpers.twitter_disable_edit
-            }
+            'tweet_ready': js_helpers.tweet_ready,
+            'get_tweet': js_helpers.get_tweet,
+            'disable_edit': config_helpers.twitter_disable_edit
+        }
 
     ## IBlueprint
     def get_blueprint(self):
