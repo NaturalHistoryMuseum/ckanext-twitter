@@ -54,6 +54,16 @@ Path variables used below:
   ckan.plugins = ... twitter
   ```
 
+6. Add a `tweet` block to `read_base.html`:
+
+   ```jinja2
+   {% block tweet %}
+   {{ super() }}
+   {% endblock %}
+   ```
+
+7. Optionally, override the styling of the block by creating an `ajax_snippets/edit_tweet.html` file.
+
 # Configuration
 
 These are the options that can be specified in your .ini config file. The only _required_ options are the twitter credentials. Everything else has a sensible default set.
