@@ -17,13 +17,13 @@ blueprint = Blueprint(name='tweet', import_name=__name__)
 
 @blueprint.route('/dataset/<package_id>/tweet', methods=['POST'])
 def send(package_id):
-    '''
-    Posts the tweet given in the request body. The package ID is required for caching. Returns json
-    data for displaying success/error messages.
+    """
+    Posts the tweet given in the request body. The package ID is required for caching.
+    Returns json data for displaying success/error messages.
 
     :param package_id: The package ID (for caching).
     :return: str
-    '''
+    """
     body = toolkit.request.values
     text = body.get('tweet_text', None)
     if text:
@@ -31,11 +31,13 @@ def send(package_id):
     else:
         posted = False
         reason = 'no tweet defined'
-    return json.dumps({
-        'success': posted,
-        'reason': reason,
-        'tweet': text if text else 'tweet not defined'
-    })
+    return json.dumps(
+        {
+            'success': posted,
+            'reason': reason,
+            'tweet': text if text else 'tweet not defined',
+        }
+    )
 
 
 @blueprint.route('/dataset/<package_id>/tweet-clear', methods=['POST'])
