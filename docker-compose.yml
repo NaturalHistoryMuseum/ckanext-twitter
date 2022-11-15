@@ -8,18 +8,16 @@ services:
     environment:
       PYTHONUNBUFFERED: 1
       PYTHONDONTWRITEBYTECODE: 1
-      DB_USERNAME: ckan
-      DB_PASSWORD: password
     depends_on:
       - db
       - solr
       - redis
     volumes:
-      - .:/srv/app/src/ckanext-twitter
+      - ./ckanext:/base/src/ckanext-twitter/ckanext
+      - ./tests:/base/src/ckanext-twitter/tests
 
   solr:
-    build:
-      context: https://github.com/okfn/docker-ckan.git#:solr
+    image: ckan/ckan-solr:2.9
     logging:
       driver: none
 

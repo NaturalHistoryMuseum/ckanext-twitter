@@ -2,10 +2,11 @@
 
 # ckanext-twitter
 
-[![Travis](https://img.shields.io/travis/NaturalHistoryMuseum/ckanext-twitter/main.svg?style=flat-square)](https://travis-ci.com/NaturalHistoryMuseum/ckanext-twitter)
-[![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-twitter/main.svg?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-twitter)
+[![Tests](https://img.shields.io/github/workflow/status/NaturalHistoryMuseum/ckanext-twitter/Tests?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-twitter/actions/workflows/main.yml)
+[![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-twitter/main?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-twitter)
 [![CKAN](https://img.shields.io/badge/ckan-2.9.1-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
+[![Docs](https://img.shields.io/readthedocs/ckanext-twitter?style=flat-square)](https://ckanext-twitter.readthedocs.io)
 
 _A CKAN extension that enables users to post a tweet every time a dataset is created or updated._
 
@@ -156,8 +157,7 @@ Your tweet would then read:
 # Testing
 _Note that the tests shouldn't make any calls to Twitter's API and won't post any tweets!_
 
-To run the tests in this extension, there is a Docker compose configuration available in this
-repository to make it easy.
+There is a Docker compose configuration available in this repository to make it easier to run tests.
 
 To run the tests against ckan 2.9.x on Python3:
 
@@ -174,4 +174,4 @@ docker-compose build
 docker-compose run ckan
 ```
 
-The ckan image uses the Dockerfile in the `docker/` folder which is based on `openknowledge/ckan-dev:2.9`.
+The ckan image uses the Dockerfile in the `docker/` folder.
