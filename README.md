@@ -1,22 +1,28 @@
+<!--header-start-->
 <img src=".github/nhm-logo.svg" align="left" width="150px" height="100px" hspace="40"/>
 
 # ckanext-twitter
 
-[![Travis](https://img.shields.io/travis/NaturalHistoryMuseum/ckanext-twitter/main.svg?style=flat-square)](https://travis-ci.com/NaturalHistoryMuseum/ckanext-twitter)
-[![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-twitter/main.svg?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-twitter)
+[![Tests](https://img.shields.io/github/workflow/status/NaturalHistoryMuseum/ckanext-twitter/Tests?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-twitter/actions/workflows/main.yml)
+[![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-twitter/main?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-twitter)
 [![CKAN](https://img.shields.io/badge/ckan-2.9.1-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
+[![Docs](https://img.shields.io/readthedocs/ckanext-twitter?style=flat-square)](https://ckanext-twitter.readthedocs.io)
 
 _A CKAN extension that enables users to post a tweet every time a dataset is created or updated._
 
+<!--header-end-->
 
 # Overview
 
+<!--overview-start-->
 This extension connects a CKAN instance to a Twitter account so that when a dataset is updated or created (i.e. the `after_update` hook is called), the user has the option to post a tweet about the activity.
 
+<!--overview-end-->
 
 # Installation
 
+<!--installation-start-->
 Path variables used below:
 - `$INSTALL_FOLDER` (i.e. where CKAN is installed), e.g. `/usr/lib/ckan/default`
 - `$CONFIG_FILE`, e.g. `/etc/ckan/default/development.ini`
@@ -64,8 +70,11 @@ Path variables used below:
 
 7. Optionally, override the styling of the block by creating an `ajax_snippets/edit_tweet.html` file.
 
+<!--installation-end-->
+
 # Configuration
 
+<!--configuration-start-->
 These are the options that can be specified in your .ini config file. The only _required_ options are the twitter credentials. Everything else has a sensible default set.
 
 ## **[REQUIRED]**
@@ -104,9 +113,11 @@ Name|Description|Options|Default
 `ckanext.twitter.hours_between_tweets`|Number of hours between tweets about the _same dataset_ (to prevent spamming)||24
 `ckanext.twitter.disable_edit`|If true, users will not be able to edit the tweet about their dataset before it is posted (though they can still decide not to post it)|True, False|False
 
+<!--configuration-end-->
 
 # Usage
 
+<!--usage-start-->
 ## Tweet Templates
 
 Token values for the tweet templates will come from a simplified package dictionary. In these, any collection values (i.e. lists and dictionaries) have been replaced with the number of items, the author list has been significantly shortened, and any long strings will be shortened to fit into the tweet character limit (currently set at 140).
@@ -152,12 +163,14 @@ Your tweet would then read:
 
 > New dataset: "Dataset Name" by Diplodocus et al. (2 resources)
 
+<!--usage-end-->
 
 # Testing
+
+<!--testing-start-->
 _Note that the tests shouldn't make any calls to Twitter's API and won't post any tweets!_
 
-To run the tests in this extension, there is a Docker compose configuration available in this
-repository to make it easy.
+There is a Docker compose configuration available in this repository to make it easier to run tests.
 
 To run the tests against ckan 2.9.x on Python3:
 
@@ -174,4 +187,6 @@ docker-compose build
 docker-compose run ckan
 ```
 
-The ckan image uses the Dockerfile in the `docker/` folder which is based on `openknowledge/ckan-dev:2.9`.
+The ckan image uses the Dockerfile in the `docker/` folder.
+
+<!--testing-end-->

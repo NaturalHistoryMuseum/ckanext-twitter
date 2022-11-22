@@ -14,9 +14,10 @@ from ckanext.twitter.lib import config_helpers, helpers as twitter_helpers
 
 
 class TwitterPlugin(SingletonPlugin):
-    '''
+    """
     Automatically send tweets when a dataset is updated or created.
-    '''
+    """
+
     implements(interfaces.IConfigurable, inherit=True)
     implements(interfaces.IConfigurer)
     implements(interfaces.IPackageController, inherit=True)
@@ -25,15 +26,16 @@ class TwitterPlugin(SingletonPlugin):
 
     # IConfigurable
     def configure(self, config):
-        cache_regions.update({
-            'twitter': {
-                'expire':
-                    ckanext.twitter.lib.config_helpers.twitter_hours_between_tweets(),
-                'type': 'memory',
-                'enabled': True,
-                'key_length': 250
+        cache_regions.update(
+            {
+                'twitter': {
+                    'expire': ckanext.twitter.lib.config_helpers.twitter_hours_between_tweets(),
+                    'type': 'memory',
+                    'enabled': True,
+                    'key_length': 250,
+                }
             }
-        })
+        )
 
     # IConfigurer
     def update_config(self, config):
@@ -55,7 +57,7 @@ class TwitterPlugin(SingletonPlugin):
         return {
             'tweet_ready': js_helpers.tweet_ready,
             'get_tweet': js_helpers.get_tweet,
-            'disable_edit': config_helpers.twitter_disable_edit
+            'disable_edit': config_helpers.twitter_disable_edit,
         }
 
     ## IBlueprint

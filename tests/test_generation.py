@@ -14,9 +14,10 @@ from ckanext.twitter.lib import parsers as twitter_parsers, twitter_api
 
 @pytest.mark.filterwarnings('ignore::sqlalchemy.exc.SADeprecationWarning')
 @pytest.mark.ckan_config('ckan.plugins', 'datastore')
-@pytest.mark.usefixtures('clean_db', 'clean_datastore', 'with_plugins', 'with_request_context')
+@pytest.mark.usefixtures(
+    'clean_db', 'clean_datastore', 'with_plugins', 'with_request_context'
+)
 class TestTweetGeneration(object):
-
     def test_public(self):
         package = factories.Dataset()
 
@@ -35,7 +36,9 @@ class TestTweetGeneration(object):
         tweet_text = twitter_parsers.generate_tweet(context, package['id'], is_new=True)
         assert tweet_text is None
 
-    @pytest.mark.ckan_config('ckanext.twitter.new', '{{ title }} / {{ author }} / {{ records }}')
+    @pytest.mark.ckan_config(
+        'ckanext.twitter.new', '{{ title }} / {{ author }} / {{ records }}'
+    )
     def test_custom_new_text(self):
         title = 'A package title'
         author = 'Author'
@@ -61,11 +64,14 @@ class TestTweetGeneration(object):
         call_action('datastore_create', resource_id=resource['id'], records=records)
 
         tweet_text = twitter_parsers.generate_tweet({}, package['id'], is_new=True)
-        correct_tweet_text = f'New dataset: "{title}" by {author} ({len(records)} records).'
+        correct_tweet_text = (
+            f'New dataset: "{title}" by {author} ({len(records)} records).'
+        )
         assert tweet_text == correct_tweet_text
 
-    @pytest.mark.ckan_config('ckanext.twitter.updated',
-                             '{{ title }} / {{ author }} / {{ records }}')
+    @pytest.mark.ckan_config(
+        'ckanext.twitter.updated', '{{ title }} / {{ author }} / {{ records }}'
+    )
     def test_custom_updated_text(self):
         title = 'A package title'
         author = 'Author'
@@ -91,7 +97,9 @@ class TestTweetGeneration(object):
         call_action('datastore_create', resource_id=resource['id'], records=records)
 
         tweet_text = twitter_parsers.generate_tweet({}, package['id'], is_new=False)
-        correct_tweet_text = f'Updated dataset: "{title}" by {author} ({len(records)} records).'
+        correct_tweet_text = (
+            f'Updated dataset: "{title}" by {author} ({len(records)} records).'
+        )
         assert tweet_text == correct_tweet_text
 
     @pytest.mark.ckan_config('ckanext.twitter.debug', True)
@@ -127,8 +135,9 @@ class TestTweetGeneration(object):
         package = factories.Dataset(title=title, author=author)
 
         force_truncate = twitter_parsers.generate_tweet({}, package['id'], is_new=True)
-        no_force = twitter_parsers.generate_tweet({}, package['id'], is_new=True,
-                                                  force_truncate=False)
+        no_force = twitter_parsers.generate_tweet(
+            {}, package['id'], is_new=True, force_truncate=False
+        )
         assert len(force_truncate) <= 140
         assert len(no_force) <= 140
 
@@ -139,7 +148,9 @@ class TestTweetGeneration(object):
         # expired yet
         mock_cache_helpers = MagicMock(expired=MagicMock(return_value=False))
         with patch('ckanext.twitter.lib.twitter_api.cache_helpers', mock_cache_helpers):
-            tweeted, reason = twitter_api.post_tweet('This is a test tweet.', MagicMock())
+            tweeted, reason = twitter_api.post_tweet(
+                'This is a test tweet.', MagicMock()
+            )
         assert not tweeted
         assert reason == 'insufficient rest period'
 
@@ -150,7 +161,9 @@ class TestTweetGeneration(object):
 
         mock_cache_helpers = MagicMock(expired=MagicMock(return_value=True))
         with patch('ckanext.twitter.lib.twitter_api.cache_helpers', mock_cache_helpers):
-            tweeted, reason = twitter_api.post_tweet('This is a test tweet.', MagicMock())
+            tweeted, reason = twitter_api.post_tweet(
+                'This is a test tweet.', MagicMock()
+            )
 
         assert not tweeted
         assert reason == 'not authenticated'

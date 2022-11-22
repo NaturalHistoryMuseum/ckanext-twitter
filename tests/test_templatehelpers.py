@@ -24,7 +24,6 @@ def session():
 
 
 class TestGetConfigVariables(object):
-
     def test_returns_false_if_not_in_session(self, js_helpers, session):
         package = factories.Dataset()
 
