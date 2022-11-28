@@ -19,7 +19,9 @@ from ckanext.twitter.lib import twitter_api
 def test_can_authenticate_success():
     mock_content = MagicMock()
     mock_response = MagicMock(status=200)
-    mock_client = MagicMock(request=MagicMock(return_value=(mock_response, mock_content)))
+    mock_client = MagicMock(
+        request=MagicMock(return_value=(mock_response, mock_content))
+    )
     twitter_client_mock = MagicMock(return_value=mock_client)
     with patch('ckanext.twitter.lib.twitter_api.twitter_client', twitter_client_mock):
         is_authenticated = twitter_api.twitter_authenticate()
@@ -39,7 +41,9 @@ def test_can_authenticate_error():
 
     mock_content = MagicMock()
     mock_response = MagicMock(status=500)
-    mock_client = MagicMock(request=MagicMock(return_value=(mock_response, mock_content)))
+    mock_client = MagicMock(
+        request=MagicMock(return_value=(mock_response, mock_content))
+    )
     twitter_client_mock = MagicMock(return_value=mock_client)
     with patch('ckanext.twitter.lib.twitter_api.twitter_client', twitter_client_mock):
         is_authenticated = twitter_api.twitter_authenticate()
@@ -47,12 +51,14 @@ def test_can_authenticate_error():
 
 
 def test_can_authenticate_bad_creds():
-    '''
+    """
     Test what happens when we don't set any auth creds.
-    '''
+    """
     mock_content = MagicMock()
     mock_response = MagicMock(status=200)
-    mock_client = MagicMock(request=MagicMock(return_value=(mock_response, mock_content)))
+    mock_client = MagicMock(
+        request=MagicMock(return_value=(mock_response, mock_content))
+    )
     twitter_client_mock = MagicMock(return_value=mock_client)
     with patch('ckanext.twitter.lib.twitter_api.twitter_client', twitter_client_mock):
         is_authenticated = twitter_api.twitter_authenticate()

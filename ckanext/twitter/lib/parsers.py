@@ -16,7 +16,7 @@ tweet_limit = 140
 
 
 def extract_info(context, pkg_dict, template_length, tokens):
-    '''
+    """
     Creates a simplified dictionary for use in a tweet string template.
 
     :param context: The current context.
@@ -24,16 +24,20 @@ def extract_info(context, pkg_dict, template_length, tokens):
     :param template_length: The length of the text in the template (without any of the tokens).
     :param tokens: A list of token names in the template (extracted via regex).
     :return: dict
-    '''
+    """
     # get the values that are simple (i.e. not lists or dicts)
-    simplified = {k: v for k, v in pkg_dict.items() if
-                  not isinstance(v, list) and not isinstance(v,
-                                                             dict) and v is
-                  not None}
+    simplified = {
+        k: v
+        for k, v in pkg_dict.items()
+        if not isinstance(v, list) and not isinstance(v, dict) and v is not None
+    }
 
     # turn the lists into counts
-    list_lengths = {k: len(v) for k, v in pkg_dict.items() if
-                    isinstance(v, list) or isinstance(v, dict)}
+    list_lengths = {
+        k: len(v)
+        for k, v in pkg_dict.items()
+        if isinstance(v, list) or isinstance(v, dict)
+    }
     for k, v in list_lengths.items():
         simplified[k] = v
 
@@ -42,12 +46,17 @@ def extract_info(context, pkg_dict, template_length, tokens):
     simplified['author'] = truncate_author(simplified.get('author', 'Anon.'))
 
     # truncate other fields
-    other_tokens = [t for t in tokens if t not in ['records', 'author'] and t in simplified.keys()]
+    other_tokens = [
+        t for t in tokens if t not in ['records', 'author'] and t in simplified.keys()
+    ]
     max_total_token = tweet_limit - template_length
-    total_token = sum([len(str(simplified[t])) for t in tokens if t in ['records', 'author']])
+    total_token = sum(
+        [len(str(simplified[t])) for t in tokens if t in ['records', 'author']]
+    )
     for i in range(len(other_tokens)):
         char_limit = math.floor(
-            (max_total_token - total_token) / (len(other_tokens) - i))
+            (max_total_token - total_token) / (len(other_tokens) - i)
+        )
         val = str(simplified.get(other_tokens[i], '')).strip()
         if len(val) > char_limit:
             val = truncate_field(val, char_limit)
@@ -57,11 +66,12 @@ def extract_info(context, pkg_dict, template_length, tokens):
 
 
 def truncate_author(author):
-    '''
+    """
     Shortens the author field using regular expressions.
+
     :param author: The full author string.
     :return: str
-    '''
+    """
     sep_rgx = '\s?[,;]\s?'
     name_sep_rgx = '(?<=[^,;])\s'
     separators = list(set(re.findall(sep_rgx, author)))
@@ -75,13 +85,14 @@ def truncate_author(author):
 
 
 def truncate_field(value, char_limit):
-    '''
-    Shortens the given value to a length equal to or less than the character
-    limit and appends a continuation marker.
+    """
+    Shortens the given value to a length equal to or less than the character limit and
+    appends a continuation marker.
+
     :param value: The value to be truncated.
     :param char_limit: The maximum number of characters in the output string.
     :return: str
-    '''
+    """
     marker = '[...]'
     truncated = []
     if ' ' in value:
@@ -92,19 +103,18 @@ def truncate_field(value, char_limit):
             else:
                 break
         return ' '.join(truncated) + marker
-    return value[:char_limit - len(marker)] + marker
+    return value[: char_limit - len(marker)] + marker
 
 
 def get_number_records(context, pkg_id):
-    '''
+    """
     Counts the total number of records associated with a package.
+
     :param context: The current context.
     :param pkg_id: The package ID.
     :return: int
-    '''
-    pkg = toolkit.get_action('package_show')(context, {
-        'id': pkg_id
-    })
+    """
+    pkg = toolkit.get_action('package_show')(context, {'id': pkg_id})
     resources = pkg.get('resources', None)
     if not resources or len(resources) == 0:
         return 0
@@ -112,9 +122,9 @@ def get_number_records(context, pkg_id):
     total = 0
     for rid in resource_ids:
         try:
-            resource_data = toolkit.get_action('datastore_search')(context, {
-                'resource_id': rid
-            })
+            resource_data = toolkit.get_action('datastore_search')(
+                context, {'resource_id': rid}
+            )
             total += resource_data.get('total', 0)
         except (toolkit.ObjectNotFound, SearchIndexError):
             pass
@@ -122,9 +132,10 @@ def get_number_records(context, pkg_id):
 
 
 def generate_tweet(context, pkg_id, is_new, force_truncate=True):
-    '''
-    Generates a standard tweet based on template values in the
-    config. Does not post the tweet; just generates and returns the text.
+    """
+    Generates a standard tweet based on template values in the config. Does not post the
+    tweet; just generates and returns the text.
+
     :param context: The current context.
     :param pkg_id: The ID of the package to tweet about.
     :param is_new: True if the package has only just been created or given
@@ -133,15 +144,15 @@ def generate_tweet(context, pkg_id, is_new, force_truncate=True):
     ensure the text is below 140 characters. This should not be necessary as
     other methods account for this, but this is an optional final check.
     :return: str
-    '''
-    pkg = toolkit.get_action('package_show')(context, {
-        'id': pkg_id
-    })
+    """
+    pkg = toolkit.get_action('package_show')(context, {'id': pkg_id})
     if pkg.get('private', False):
         return
-    format_string = config_helpers.twitter_new_format() \
-        if is_new else \
-        config_helpers.twitter_updated_format()
+    format_string = (
+        config_helpers.twitter_new_format()
+        if is_new
+        else config_helpers.twitter_updated_format()
+    )
     tokens = re.findall('(?:{{ )(\w+)(?:(?:|.+?)? }})', format_string)
     template = Environment().from_string(format_string)
     simplified_dict = extract_info(context, pkg, len(str(template.module)), tokens)

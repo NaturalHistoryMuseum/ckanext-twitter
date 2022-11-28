@@ -10,51 +10,51 @@ from beaker.cache import CacheManager, cache_managers
 from beaker.util import parse_cache_config_options
 from ckanext.twitter.lib import config_helpers
 
-cache_opts = {
-    'cache.type': 'memory',
-    'cache.lock_dir': '/tmp/cache/lock'
-}
+cache_opts = {'cache.type': 'memory', 'cache.lock_dir': '/tmp/cache/lock'}
 
 cache_manager = CacheManager(**parse_cache_config_options(cache_opts))
 twitter_cache = cache_manager.get_cache('twitter')
 
 
 def cache(pkg_id):
-    '''
-    Adds the package id and current time to the 'twitter' cache. Clears any
-    existing entries for the given package id first.
+    """
+    Adds the package id and current time to the 'twitter' cache. Clears any existing
+    entries for the given package id first.
+
     :param pkg_id: The package id to store.
-    '''
+    """
     twitter_cache.remove_value(pkg_id)
     twitter_cache.put(pkg_id, dt.now())
 
 
 def reset_cache():
-    '''
+    """
     Clears everything from the 'twitter' cache.
-    '''
+    """
     twitter_cache.clear()
     for k, c in cache_managers.items():
         c.clear()
 
 
 def remove_from_cache(pkg_id):
-    '''
+    """
     Remove the package id from the cache.
+
     :param pkg_id:
-    '''
+    """
     twitter_cache.remove_value(pkg_id)
 
 
 def expired(pkg_id):
-    '''
-    Checks to see if the cache entry for the package's last tweet (if any)
-    is old enough to be overwritten.
+    """
+    Checks to see if the cache entry for the package's last tweet (if any) is old enough
+    to be overwritten.
+
     :param pkg_id: The package ID.
     :return: boolean
-    '''
+    """
     if not twitter_cache.has_key(pkg_id):
         return True
     last_posted = twitter_cache.get(pkg_id)
-    hours_since = ((dt.now() - last_posted).seconds / 3600)
+    hours_since = (dt.now() - last_posted).seconds / 3600
     return hours_since > config_helpers.twitter_hours_between_tweets()
