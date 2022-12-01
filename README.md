@@ -80,12 +80,12 @@ These are the options that can be specified in your .ini config file. The only _
 
 ## **[REQUIRED]**
 
-Name|Description|Options
---|--|--
-`ckanext.twitter.consumer_key`|Your Twitter consumer key|
-`ckanext.twitter.consumer_secret`|Your Twitter consumer secret|
-`ckanext.twitter.token_key`|Your Twitter token key|
-`ckanext.twitter.token_secret`|Your Twitter token secret|
+| Name                              | Description                  | Options |
+|-----------------------------------|------------------------------|---------|
+| `ckanext.twitter.consumer_key`    | Your Twitter consumer key    |         |
+| `ckanext.twitter.consumer_secret` | Your Twitter consumer secret |         |
+| `ckanext.twitter.token_key`       | Your Twitter token key       |         |
+| `ckanext.twitter.token_secret`    | Your Twitter token secret    |         |
 
 All of these can be obtained by creating a single-user app at [apps.twitter.com](https://apps.twitter.com). They can be found on the "keys and access tokens" tab when viewing your app.
 
@@ -93,10 +93,10 @@ All of these can be obtained by creating a single-user app at [apps.twitter.com]
 
 Tweets are generated using [Jinja2](http://jinja.pocoo.org) and use tokens derived from the package dictionary. See [Usage](#usage) for more detail.
 
-Name|Description|Default
---|--|--
-`ckanext.twitter.new`|Template for tweets about new datasets|`New dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`
-`ckanext.twitter.updated`|Template for tweets about updated datasets|`Updated dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`
+| Name                      | Description                                | Default                                                                                                                                               |
+|---------------------------|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ckanext.twitter.new`     | Template for tweets about new datasets     | `New dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`     |
+| `ckanext.twitter.updated` | Template for tweets about updated datasets | `Updated dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).` |
 
 If your config is created dynamically using Jinja2, you will have to wrap any custom template in `{% raw %}{% endraw %}` tags and **add a newline after it**, e.g.:
 ```ini
@@ -108,11 +108,11 @@ ckanext.twitter...
 
 ## Other options
 
-Name|Description|Options|Default
---|--|--|--
-`ckanext.twitter.debug`|Is in debug mode; overrides global debug flag if specified|True, False|False
-`ckanext.twitter.hours_between_tweets`|Number of hours between tweets about the _same dataset_ (to prevent spamming)||24
-`ckanext.twitter.disable_edit`|If true, users will not be able to edit the tweet about their dataset before it is posted (though they can still decide not to post it)|True, False|False
+| Name                                   | Description                                                                                                                             | Options     | Default |
+|----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------|---------|
+| `ckanext.twitter.debug`                | Is in debug mode; overrides global debug flag if specified                                                                              | True, False | False   |
+| `ckanext.twitter.hours_between_tweets` | Number of hours between tweets about the _same dataset_ (to prevent spamming)                                                           |             | 24      |
+| `ckanext.twitter.disable_edit`         | If true, users will not be able to edit the tweet about their dataset before it is posted (though they can still decide not to post it) | True, False | False   |
 
 <!--configuration-end-->
 
