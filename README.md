@@ -5,7 +5,7 @@
 
 [![Tests](https://img.shields.io/github/workflow/status/NaturalHistoryMuseum/ckanext-twitter/Tests?style=flat-square)](https://github.com/NaturalHistoryMuseum/ckanext-twitter/actions/workflows/main.yml)
 [![Coveralls](https://img.shields.io/coveralls/github/NaturalHistoryMuseum/ckanext-twitter/main?style=flat-square)](https://coveralls.io/github/NaturalHistoryMuseum/ckanext-twitter)
-[![CKAN](https://img.shields.io/badge/ckan-2.9.1-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
+[![CKAN](https://img.shields.io/badge/ckan-2.9.7-orange.svg?style=flat-square)](https://github.com/ckan/ckan)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg?style=flat-square)](https://www.python.org/)
 [![Docs](https://img.shields.io/readthedocs/ckanext-twitter?style=flat-square)](https://ckanext-twitter.readthedocs.io)
 
@@ -27,48 +27,49 @@ Path variables used below:
 - `$INSTALL_FOLDER` (i.e. where CKAN is installed), e.g. `/usr/lib/ckan/default`
 - `$CONFIG_FILE`, e.g. `/etc/ckan/default/development.ini`
 
-1. Clone the repository into the `src` folder:
+## Installing from PyPI
 
-  ```bash
-  cd $INSTALL_FOLDER/src
-  git clone https://github.com/NaturalHistoryMuseum/ckanext-twitter.git
-  ```
+```shell
+pip install ckanext-twitter
+```
+
+## Installing from source
+
+1. Clone the repository into the `src` folder:
+   ```shell
+   cd $INSTALL_FOLDER/src
+   git clone https://github.com/NaturalHistoryMuseum/ckanext-twitter.git
+   ```
 
 2. Activate the virtual env:
+   ```shell
+   . $INSTALL_FOLDER/bin/activate
+   ```
 
-  ```bash
-  . $INSTALL_FOLDER/bin/activate
-  ```
+3. Install via pip:
+   ```shell
+   pip install $INSTALL_FOLDER/src/ckanext-twitter
+   ```
 
-3. Install the requirements from requirements.txt:
+### Installing in editable mode
 
-  ```bash
-  cd $INSTALL_FOLDER/src/ckanext-twitter
-  pip install -r requirements.txt
-  ```
+Installing from a `pyproject.toml` in editable mode (i.e. `pip install -e`) requires `setuptools>=64`; however, CKAN 2.9 requires `setuptools==44.1.0`. See [our CKAN fork](https://github.com/NaturalHistoryMuseum/ckan) for a version of v2.9 that uses an updated setuptools if this functionality is something you need.
 
-4. Run setup.py:
+## Post-install setup
 
-  ```bash
-  cd $INSTALL_FOLDER/src/ckanext-twitter
-  python setup.py develop
-  ```
+1. Add 'twitter' to the list of plugins in your `$CONFIG_FILE`:
+   ```ini
+   ckan.plugins = ... twitter
+   ```
 
-5. Add 'twitter' to the list of plugins in your `$CONFIG_FILE`:
-
-  ```ini
-  ckan.plugins = ... twitter
-  ```
-
-6. Add a `tweet` block to `read_base.html`:
-
+2. Add a 'tweet' block to `read_base.html`:
    ```jinja2
    {% block tweet %}
    {{ super() }}
    {% endblock %}
    ```
 
-7. Optionally, override the styling of the block by creating an `ajax_snippets/edit_tweet.html` file.
+3. Optionally, override the styling of the block by creating an `ajax_snippets/edit_tweet.html` file.
 
 <!--installation-end-->
 
@@ -79,12 +80,12 @@ These are the options that can be specified in your .ini config file. The only _
 
 ## **[REQUIRED]**
 
-Name|Description|Options
---|--|--
-`ckanext.twitter.consumer_key`|Your Twitter consumer key|
-`ckanext.twitter.consumer_secret`|Your Twitter consumer secret|
-`ckanext.twitter.token_key`|Your Twitter token key|
-`ckanext.twitter.token_secret`|Your Twitter token secret|
+| Name                              | Description                  | Options |
+|-----------------------------------|------------------------------|---------|
+| `ckanext.twitter.consumer_key`    | Your Twitter consumer key    |         |
+| `ckanext.twitter.consumer_secret` | Your Twitter consumer secret |         |
+| `ckanext.twitter.token_key`       | Your Twitter token key       |         |
+| `ckanext.twitter.token_secret`    | Your Twitter token secret    |         |
 
 All of these can be obtained by creating a single-user app at [apps.twitter.com](https://apps.twitter.com). They can be found on the "keys and access tokens" tab when viewing your app.
 
@@ -92,10 +93,10 @@ All of these can be obtained by creating a single-user app at [apps.twitter.com]
 
 Tweets are generated using [Jinja2](http://jinja.pocoo.org) and use tokens derived from the package dictionary. See [Usage](#usage) for more detail.
 
-Name|Description|Default
---|--|--
-`ckanext.twitter.new`|Template for tweets about new datasets|`New dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`
-`ckanext.twitter.updated`|Template for tweets about updated datasets|`Updated dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`
+| Name                      | Description                                | Default                                                                                                                                               |
+|---------------------------|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ckanext.twitter.new`     | Template for tweets about new datasets     | `New dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).`     |
+| `ckanext.twitter.updated` | Template for tweets about updated datasets | `Updated dataset: "{{ title }}" by {{ author }} ({%- if records != 0 -%} {{ records }} records {%- else -%} {{ resources }} resource {%- endif -%}).` |
 
 If your config is created dynamically using Jinja2, you will have to wrap any custom template in `{% raw %}{% endraw %}` tags and **add a newline after it**, e.g.:
 ```ini
@@ -107,11 +108,11 @@ ckanext.twitter...
 
 ## Other options
 
-Name|Description|Options|Default
---|--|--|--
-`ckanext.twitter.debug`|Is in debug mode; overrides global debug flag if specified|True, False|False
-`ckanext.twitter.hours_between_tweets`|Number of hours between tweets about the _same dataset_ (to prevent spamming)||24
-`ckanext.twitter.disable_edit`|If true, users will not be able to edit the tweet about their dataset before it is posted (though they can still decide not to post it)|True, False|False
+| Name                                   | Description                                                                                                                             | Options     | Default |
+|----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------|---------|
+| `ckanext.twitter.debug`                | Is in debug mode; overrides global debug flag if specified                                                                              | True, False | False   |
+| `ckanext.twitter.hours_between_tweets` | Number of hours between tweets about the _same dataset_ (to prevent spamming)                                                           |             | 24      |
+| `ckanext.twitter.disable_edit`         | If true, users will not be able to edit the tweet about their dataset before it is posted (though they can still decide not to post it) | True, False | False   |
 
 <!--configuration-end-->
 
@@ -168,25 +169,23 @@ Your tweet would then read:
 # Testing
 
 <!--testing-start-->
-_Note that the tests shouldn't make any calls to Twitter's API and won't post any tweets!_
-
-There is a Docker compose configuration available in this repository to make it easier to run tests.
+There is a Docker compose configuration available in this repository to make it easier to run tests. The ckan image uses the Dockerfile in the `docker/` folder.
 
 To run the tests against ckan 2.9.x on Python3:
 
-1. Build the required images
-```bash
-docker-compose build
-```
+1. Build the required images:
+   ```shell
+   docker-compose build
+   ```
 
 2. Then run the tests.
    The root of the repository is mounted into the ckan container as a volume by the Docker compose
    configuration, so you should only need to rebuild the ckan image if you change the extension's
    dependencies.
-```bash
-docker-compose run ckan
-```
+   ```shell
+   docker-compose run ckan
+   ```
 
-The ckan image uses the Dockerfile in the `docker/` folder.
+Note that the tests shouldn't make any calls to Twitter's API and won't post any tweets.
 
 <!--testing-end-->
