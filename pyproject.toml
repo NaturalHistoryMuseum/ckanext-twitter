@@ -19,8 +19,8 @@ classifiers = [
     "Programming Language :: Python :: 3.8"
 ]
 dependencies = [
-    "ckantools>=0.3.0",
-    "oauth2==1.9.0.post1"
+    "oauth2==1.9.0.post1",
+    "ckantools>=0.3.0"
 ]
 
 [project.optional-dependencies]
@@ -52,7 +52,7 @@ zip-safe = false
 exclude = ["tests", "docs"]
 
 [tool.setuptools.package-data]
-"ckanext.twitter.theme" = ["**/*"]
+"ckanext.twitter.theme" = ["*", "**/*"]
 
 [tool.commitizen]
 name = "cz_nhm"
