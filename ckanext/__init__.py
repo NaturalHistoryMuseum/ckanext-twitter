@@ -4,6 +4,15 @@
 # This file is part of ckanext-twitter
 # Created by the Natural History Museum in London, UK
 
+import warnings
+
+
+warnings.warn(
+    'ckanext-twitter has been deprecated; please consider removing it',
+    DeprecationWarning,
+    2,
+)
+
 try:
     import pkg_resources
 

@@ -1,3 +1,11 @@
+<!--notices-start-->
+> **Warning**
+> ## This extension is now deprecated.
+>
+> Due to the API changes Twitter/X introduced in 2023, this extension no longer works and will not be fixed. There will not be any further releases, new features, or bugfixes.
+
+<!--notices-end-->
+
 <!--header-start-->
 <img src="https://data.nhm.ac.uk/images/nhm_logo.svg" align="left" width="150px" height="100px" hspace="40"/>
 
