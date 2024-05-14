@@ -23,6 +23,8 @@ def twitter_client():
 
     :return: oauth2.Client
     """
+    logger.info('ckanext-twitter has been deprecated; please consider removing it')
+
     (
         consumer_key,
         consumer_secret,
@@ -42,6 +44,8 @@ def twitter_authenticate():
     Refreshes any unauthenticated cached client.
     :return: boolean
     """
+    logger.info('ckanext-twitter has been deprecated; please consider removing it')
+
     authenticated = False
     while not authenticated:
         client = twitter_client()
@@ -75,6 +79,8 @@ def post_tweet(tweet_text, pkg_id):
     :param pkg_id: The package ID (for caching).
     :return: boolean, str
     """
+    logger.info('ckanext-twitter has been deprecated; please consider removing it')
+
     if config_helpers.twitter_is_debug():
         logger.debug(f'Not posted (debug): {tweet_text}')
         return False, 'debug'
