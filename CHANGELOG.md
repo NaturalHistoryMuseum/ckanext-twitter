@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.2.9 (2024-05-14)
+
+### Docs
+
+- add notices section to docs index
+
+### Chores/Misc
+
+- add deprecation notice to readme
+- add build section to read the docs config
+- add regex for version line in citation file
+- add citation.cff to list of files with version
+- add contributing guidelines
+- add code of conduct
+- add citation file
+- update support.md links
+
 ## v2.2.8 (2023-07-17)
 
 ### Docs
